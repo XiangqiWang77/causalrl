@@ -31,7 +31,7 @@ import requests
 
 def extract_answer(text):
     """ """
-    pattern = r"<answer>(.*?)</answer>"
+    pattern = r"<finalanswer>(.*?)</finalanswer>"
     matches = re.findall(pattern, text, re.DOTALL)
     if len(matches) == 1:
         return matches[0]
@@ -254,10 +254,10 @@ class BaseRequest(BaseModel):
 
 
 def format_reward(answer: str | List[str], **kwargs) -> List[float]:
-    """Reward function that checks if the reasoning process is enclosed within <think> and </think> tags, while the final answer is enclosed within <answer> and </answer> tags."""
+    """Reward function that checks if the reasoning process is enclosed within <think> and </think> tags, while the final answer is enclosed within <finalanswer> and </finalanswer> tags."""
 
     # step 1
-    pattern = r"^<think>.*?</think>\s*<answer>.*?</answer>$"
+    pattern = r"^<think>.*?</think>\s*<finalanswer>.*?</finalanswer>$"
 
     def drop_end_tag(x: str):
         end_tag_list = ["<|im_end|>", "<|endoftext|>"]
@@ -283,13 +283,13 @@ def format_reward(answer: str | List[str], **kwargs) -> List[float]:
 
     # step 2
     def format_func_patch1(x: str):
-        # Check if the string starts with <think> and ends with </answer>
-        if not (x[:100].find("<think>") != -1 and x[-100:].find("</answer>") != -1):
-            # if not (x[:100].startswith("<think>") and x[-100:].endswith("</answer>")):
+        # Check if the string starts with <think> and ends with </finalanswer>
+        if not (x[:100].find("<think>") != -1 and x[-100:].find("</finalanswer>") != -1):
+            # if not (x[:100].startswith("<think>") and x[-100:].endswith("</finalanswer>")):
             return 0.0
 
         # Check if each tag appears exactly once
-        tags = ["<think>", "</think>", "<answer>", "</answer>"]
+        tags = ["<think>", "</think>", "<finalanswer>", "</finalanswer>"]
         for tag in tags:
             if x.count(tag) != 1:
                 return 0.0
@@ -297,8 +297,8 @@ def format_reward(answer: str | List[str], **kwargs) -> List[float]:
         # Check the order of tags
         pos_think_start = x.find("<think>")
         pos_think_end = x.find("</think>")
-        pos_answer_start = x.find("<answer>")
-        pos_answer_end = x.find("</answer>")
+        pos_answer_start = x.find("<finalanswer>")
+        pos_answer_end = x.find("</finalanswer>")
 
         # Verify correct order
         if not (pos_think_start < pos_think_end < pos_answer_start < pos_answer_end):
@@ -379,40 +379,57 @@ async def get_reward2(request: Request):
     json_data = await request.json()
 
     def wrap_process_data():
-        # 取出 ground truth 和预测答案
-        ground_truth = json_data.get("ground_truth", "")
-        pred_answer = json_data.get("response_str", "")
-        if isinstance(pred_answer, list):
-            pred_answer = pred_answer[0]
+        from signal_utils import extract_XY
+        
+        import torch
+        import torch.nn.functional as F
+        from transformers import AutoTokenizer, AutoModelForCausalLM
 
-        # 初始化 RougeScorer，仅计算 ROUGE-L
-        from rouge_score import rouge_scorer
-        scorer = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)  # :contentReference[oaicite:0]{index=0}
-        scores = scorer.score(ground_truth, pred_answer)                # :contentReference[oaicite:1]{index=1}
-        rougel_f = scores["rougeL"].fmeasure                            
+        # 1) get Z and raw model output
+        Z = json_data.get("prompt_str", "")
+        resp = json_data.get("response_str", "")
+        if isinstance(resp, list):
+            resp = resp[0]
 
-        # 构造并返回分数字典
-        score = {
-            "rougeL": round(rougel_f, 4),
-            "score": round(rougel_f, 4),
+        # 2) split into X (CoT) and Y (final answer)
+        X, Y = extract_XY(resp)
+
+        print("Z:", Z)
+        print("X:", X)
+        print("Y:", Y)
+
+        
+        #print(a)
+        # 3) pick your Minkowski norm order
+        p = float(json_data.get("p_norm", 2.0))
+
+        
+        s_ZX, s_ZY, s_XY=calc.compute(Z, X, Y)
+        
+        # 4) compute the four causal‐Jacobian signals
+
+        # 5) Minkowski‐p combination of them
+        total = (abs(s_ZX)**p + abs(s_ZY)**p + abs(s_XY)**p)**(1.0/p)
+
+        result = {
+            "S(Z→X)": round(s_ZX, 6),
+            "S(Z→Y)": round(s_ZY, 6),
+            "S(X→Y)": round(s_XY, 6),
+            "score": round(total, 6),
         }
 
-        # 日志记录（可选）
-        temp_data = {
-            "input_data": json_data,
-            "score": score,
-        }
-        logger.info(json.dumps(temp_data, ensure_ascii=False))
-
-        return score
-
+        logger.info(json.dumps({"input_data": json_data, "reward": result}, ensure_ascii=False))
+        return result
 
     # Use asyncio to offload potentially CPU-bound task to a thread
     result = await asyncio.to_thread(wrap_process_data)
     return result
 
-
+from modi_signal import RMSNormalizedSignalCalculator
+model_dir = "/users/xwang76/hf_models/llama3-8b-instruct"
+calc =RMSNormalizedSignalCalculator(model_dir, device="cuda")
 if __name__ == "__main__":
     import uvicorn
 
+    
     uvicorn.run(app, host="0.0.0.0", port=6009)
