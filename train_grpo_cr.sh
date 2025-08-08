@@ -24,10 +24,10 @@ python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
     data.train_files=$data_dir/train.parquet \
     data.val_files=$data_dir/test.parquet \
-    data.train_batch_size=3 \
+    data.train_batch_size=30 \
     data.max_prompt_length=1024 \
     data.truncation=right \
-    data.max_response_length=1024 \
+    data.max_response_length=512\
     actor_rollout_ref.model.path=$model_path \
     actor_rollout_ref.actor.optim.lr=1e-5 \
     actor_rollout_ref.model.use_remove_padding=True \
@@ -43,9 +43,9 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
     actor_rollout_ref.rollout.enable_chunked_prefill=True \
     actor_rollout_ref.rollout.name=vllm \
-    actor_rollout_ref.rollout.gpu_memory_utilization=0.8 \
+    actor_rollout_ref.rollout.gpu_memory_utilization=0.6 \
     actor_rollout_ref.rollout.temperature=0.6 \
-    actor_rollout_ref.rollout.n=3 \
+    actor_rollout_ref.rollout.n=4 \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
     reward_model.reward_api=http://0.0.0.0:6009/get_reward2 \
     algorithm.kl_ctrl.kl_coef=0.001 \
@@ -55,7 +55,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.experiment_name=$cur_task \
     trainer.n_gpus_per_node=3 \
     trainer.nnodes=1 \
-    trainer.save_freq=100 \
+    trainer.save_freq=500 \
     trainer.default_local_dir=$save_model_checkpoint \
     trainer.test_freq=5 \
     trainer.total_epochs=10 $@

@@ -166,14 +166,4 @@ class RMSNormalizedSignalCalculator:
 
 
 
-# 使用示例
-if __name__ == "__main__":
-    model_dir = "/users/xwang76/hf_models/qwen3-4b"
-    calc = RMSNormalizedSignalCalculator(model_dir, device="cuda")
 
-    Z = "Question: 为什么天空是蓝色的？"
-    X = "1. 大气分子散射蓝光 2. 晴空时蓝光更易四处散射"
-    Y = "因为大气分子对蓝光散射最明显，所以我们看到天空是蓝色的。"
-
-    s_zx, s_zy, s_xy = calc.compute(Z, X, Y)
-    print(f"S(Z,X)={s_zx:.4f}, S(Z,Y)={s_zy:.4f}, S(X,Y)={s_xy:.4f}")
