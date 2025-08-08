@@ -1,84 +1,85 @@
-# convert.py
+# convert_verl_format.py
 # pip install pandas pyarrow
-
-import argparse, json, os, random, uuid, sys
+import json
 from pathlib import Path
 import pandas as pd
+import random
 
-random.seed(42)
+# 固定配置（零参数）
+DEFAULT_PREFIX = (
+    "You must wrap your final answer exactly in "
+    "<finalanswer>YOUR ANSWER</finalanswer> tags; "
+    "you may include any text before or after those tags."
+)
+TRAIN_RATIO = 0.8
+RANDOM_SEED = 42
+OUT_TRAIN = "train.parquet"
+OUT_TEST = "test.parquet"
+ABILITY = "general"  # 文档示例里叫 "math"，你这里统一用 general
 
-DEFAULT_PREFIX = "You must wrap your final answer exactly in <finalanswer>YOUR ANSWER</finalanswer> tags; you may include any text before or after those tags."
-
-def load_json_any(path: Path):
-    items, text = [], path.read_text(encoding="utf-8", errors="ignore")
-    try:
-        obj = json.loads(text)
-        if isinstance(obj, list):
-            items = obj
-        elif isinstance(obj, dict) and isinstance(obj.get("data"), list):
-            items = obj["data"]
-        elif isinstance(obj, dict) and ("question" in obj):
-            items = [obj]
-    except Exception:
-        for line in text.splitlines():
-            try:
-                items.append(json.loads(line))
-            except Exception:
-                continue
-    out = []
+def iter_qa_from_json(obj):
+    """
+    允许以下结构：
+      - [ { "question": "...", "answer": ... }, ... ]
+      - { "data": [ {...}, ... ] }
+      - { "question": "...", "answer": ... }
+    其中 answer 可为 str 或 list
+    """
+    if isinstance(obj, list):
+        items = obj
+    elif isinstance(obj, dict) and isinstance(obj.get("data"), list):
+        items = obj["data"]
+    elif isinstance(obj, dict) and ("question" in obj and "answer" in obj):
+        items = [obj]
+    else:
+        return
     for r in items:
-        if not isinstance(r, dict): continue
-        q = str(r.get("question") or "").strip()
+        if not isinstance(r, dict):
+            continue
+        q = (r.get("question") or "").strip()
         a = r.get("answer")
         if isinstance(a, list):
             a = " or ".join([str(x).strip() for x in a if x is not None and str(x).strip()])
         else:
-            a = str(a or "").strip()
+            a = ("" if a is None else str(a)).strip()
         if q and a:
-            out.append({"question": q, "answer": a})
-    return out
+            yield q, a
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--prefix", default=DEFAULT_PREFIX, help="default prefix for prompt")
-    ap.add_argument("--train_ratio", type=float, default=0.9)
-    ap.add_argument("--ability", type=str, default="general")
-    args = ap.parse_args()
-
-    files = [p for p in Path(".").glob("*.json*") if p.is_file()]
-    if not files:
-        print("No JSON files found.", file=sys.stderr)
-        sys.exit(1)
-
+    random.seed(RANDOM_SEED)
     rows = []
-    for f in files:
-        for ex in load_json_any(f):
+    json_files = sorted(Path(".").glob("*.json"))
+    if not json_files:
+        raise RuntimeError("No *.json files found in current directory.")
+
+    # 先收集所有样本
+    for p in json_files:
+        try:
+            obj = json.loads(p.read_text(encoding="utf-8", errors="ignore"))
+        except Exception:
+            continue
+        idx = 0
+        for q, a in iter_qa_from_json(obj):
+            q_full = (DEFAULT_PREFIX.strip() + "\n\n" + q.strip()).strip()
             rows.append({
-                "data_source": f.stem,
-                "question": ex["question"],
-                "answer": ex["answer"],
-                "extra_info": f.name,
+                "data_source": p.stem,
+                "prompt": [{"role": "user", "content": q_full}],   # HF chat 格式
+                "ability": ABILITY,
+                "reward_model": {"style": "rule", "ground_truth": a},  # 文档要求 ground_truth 放这里
+                "extra_info": {"split": "unknown", "index": idx},      # 必须是 dict，别用字符串
             })
+            idx += 1
 
     if not rows:
-        print("No valid QA rows parsed.", file=sys.stderr)
-        sys.exit(1)
+        raise RuntimeError("No valid question/answer pairs found.")
 
-    df = pd.DataFrame(rows)
-    df.insert(0, "id", [str(uuid.uuid4()) for _ in range(len(df))])
-    df["ability"] = args.ability
-    df["prompt"] = args.prefix.strip() + "\n\n" + df["question"]
-    df["ground_truth"] = df["answer"]
-
-    df = df[["id", "data_source", "ability", "prompt", "ground_truth", "extra_info"]]
-    df = df.sample(frac=1.0, random_state=42).reset_index(drop=True)
-    n_train = int(len(df) * args.train_ratio)
-
-    df.iloc[:n_train].to_parquet("train.parquet", index=False)
-    df.iloc[n_train:].to_parquet("test.parquet", index=False)
-
-    print(f"[OK] Total={len(df)}, Train={n_train}, Test={len(df)-n_train}")
-    print("Saved: train.parquet, test.parquet")
+    # 打乱并切分
+    df = pd.DataFrame(rows).sample(frac=1.0, random_state=RANDOM_SEED).reset_index(drop=True)
+    n_train = int(len(df) * TRAIN_RATIO)
+    df.iloc[:n_train].to_parquet(OUT_TRAIN, index=False, engine="pyarrow")
+    df.iloc[n_train:].to_parquet(OUT_TEST, index=False, engine="pyarrow")
+    print(f"OK — total={len(df)}, train={n_train}, test={len(df)-n_train}")
+    print(f"Saved: {OUT_TRAIN}, {OUT_TEST}")
 
 if __name__ == "__main__":
     main()
