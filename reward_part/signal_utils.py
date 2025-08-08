@@ -9,7 +9,7 @@ from transformers import (
 )
 from typing import Tuple
 
-MODEL_NAME = "/users/xwang76/hf_models/llama3-8b-instruct"
+MODEL_NAME = "/users/xwang76/hf_models/qwen3-4b"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=False)
 model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=torch.bfloat16, device_map="auto")
 model.eval()

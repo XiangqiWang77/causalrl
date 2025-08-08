@@ -426,7 +426,7 @@ async def get_reward2(request: Request):
     return result
 
 from modi_signal import RMSNormalizedSignalCalculator
-model_dir = "/users/xwang76/hf_models/llama3-8b-instruct"
+model_dir = "/users/xwang76/hf_models/qwen3-4b"
 calc =RMSNormalizedSignalCalculator(model_dir, device="cuda")
 if __name__ == "__main__":
     import uvicorn

@@ -1,20 +1,14 @@
-#!/usr/bin/env python
-# BBH_cj.py
-
 from datasets import load_dataset
+import json, os
 
-#ds = load_dataset("lighteval/big_bench_hard", "causal_judgement")
-def main():
-    # Load the 'causal_judgement' configuration from the maveriq/bigbenchhard dataset
-    ds = load_dataset(
-        "lighteval/big_bench_hard",
-        "causal_judgement",
-        split="train"
-    )
-    # Print a brief summary
-    print(f"Number of examples in train split: {len(ds)}")
-    print("First example:")
-    print(ds[0])
+# 1) 加载 BBEH 的 causal understanding split
+ds = load_dataset("hubert233/BigBenchExtraHard", split="causal_understanding")
 
-if __name__ == "__main__":
-    main()
+# 2) 规范化为 {question, answer}，源字段是 {input, target}
+records = [{"question": ex["input"], "answer": ex["target"]} for ex in ds]
+
+# 3) 存成 JSON（整数组合）
+out_json = "bbeh_causal_understanding.json"
+with open(out_json, "w", encoding="utf-8") as f:
+    json.dump(records, f, ensure_ascii=False, indent=2)
+print(f"Saved {len(records)} items to {os.path.abspath(out_json)}")

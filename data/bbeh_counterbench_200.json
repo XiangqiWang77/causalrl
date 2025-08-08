@@ -1,0 +1,802 @@
+[
+  {
+    "question": "We know that Nuv causes Splee, Splee and Nuv together cause Blen, Blen causes Druk, Druk causes Plog, and Plog and Splee together cause Wrox.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee and Blen, Splee causes not Druk, Blen or Druk causes Plog, Plog causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Druk. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune causes not Vork, Vork or Blaf causes Sline, Sline causes Frim, and Frim causes Lumbo.\n\nWould Lumbo occur if not Ziklo and not Vork?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes not Blorn, Blorn causes Plim, Plim and not Blorn together cause Quaz, Quaz causes Skul, Skul causes Triv, Triv causes Yex, Yex causes Rild, and Rild causes Jext.\n\nWould Jext occur if not Fizo and not Plim?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes not Scud, Scud or Wrenk causes Klep.\n\nWould Klep occur if not Praf and not Wrenk?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes not Razz, Razz causes Pex, Pex and Razz together cause Zurn, and Zurn causes Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex and Razz together cause Zurn, Zurn causes Melf, Melf and Glent together cause Crip, and Crip causes Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Glent and Razz together cause Pex, Pex causes Zurn, Zurn or not Pex causes Melf, Melf causes Crip, Crip causes Flen, Flen causes Tork, and Tork causes Zlim.\n\nWould Zlim occur if not Glent and not Pex?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes not Blorn, Blorn causes Plim, Plim causes Quaz, Quaz and Plim together cause Skul, Skul causes Triv, Triv causes Yex, and Yex and Skul together cause Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee and Blen, Blen causes Druk, Druk cause not Plog, Plog causes Skrim and Zimb, Zimb causes Wrox.\n\nWould Wrox occur if not Nuv and not Splee?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo or Blaf causes Trune, Trune causes Vork, Vork causes Sline, and Sline causes Lumbo. We observed Blaf.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo and Blaf together cause Trune, Trune causes Vork, and Vork causes Lumbo.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune causes Vork, Vork causes Sline, Sline causes Frim, and Frim causes Lumbo.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf and Trune, Trune causes Vork, Vork cause not Sline, Sline causes Frim, Frim causes Qado, Qado causes Lumbo.\n\nAssume not Ziklo, and based on this assumption, further suppose not Vork. Would Lumbo occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank and Praf together cause not Scud, Scud causes Wrenk, Wrenk causes not Yobb, and Yobb causes Klep. We observed Wrenk\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz and Pex, Razz causes not Zurn, Pex and Zurn together cause Zlim.\n\nWould Zlim occur if not Glent and not Razz?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Blorn causes Fizo, Fizo causes Plim, Plim causes Quaz, Quaz and Plim together cause Skul, Skul causes Triv, Triv and Plim together cause Yex, and Yex causes Jext. Blorn~Bern(0.6). We observed Quaz.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz and Glent together cause Pex, Pex causes Zurn, Zurn or not Razz causes Melf, Melf causes Crip, and Crip causes Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Splee causes Nuv, Nuv or Splee causes Blen, Blen causes Druk, Druk and Blen together cause Plog, Plog causes Skrim, Skrim causes Zimb, Zimb and Skrim together cause Yurd, and Yurd causes Wrox. Splee~Bern(0.6). We observed Splee.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz and Pex, Razz causes not Zurn, Pex causes not Melf, Melf causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Zurn. Would Zlim occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes Zurn, Zurn causes Melf, and Melf causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Melf. Would Zlim occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes not Blorn, Blorn causes Plim, Plim causes not Quaz, Quaz or Plim causes Skul, Skul causes Triv, Triv causes Yex, and Yex causes Jext.\n\nAssume not Fizo, and based on this assumption, further suppose not Skul. Would Jext occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes Quaz, Quaz causes Skul, and Skul causes Jext.\n\nAssume not Fizo, and based on this assumption, further suppose not Skul. Would Jext occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes not Trune, Trune causes Vork, Vork causes Sline, Sline or Ziklo causes Frim, Frim causes Qado, and Qado causes Lumbo.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Splee causes Nuv, Nuv or Splee causes Blen, Blen causes Druk, and Druk causes Wrox. Splee~ Bern(0.2). We observed Blen\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo and Blaf together cause Trune, Trune causes Vork, Vork and Ziklo together cause Sline, Sline causes Frim, and Frim causes Lumbo. We observed Blaf.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune causes Vork, Vork and Blaf together cause Sline, and Sline causes Lumbo.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Plim and Quaz, not Quaz causes Skul, Skul causes Triv, Triv or Quaz causes Yex, Yex causes Rild, and Rild causes Jext.\n\nAssume not Fizo, and based on this assumption, further suppose not Skul. Would Jext occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim and Blorn together cause Quaz, Quaz causes Skul, Skul and Plim together cause Triv, and Triv causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes not Blaf, Blaf causes Trune, Trune causes Vork, Vork and Trune together cause Sline, Sline causes Frim, Frim causes Qado, and Qado and Sline together cause Lumbo.\n\nAssume not Ziklo, and based on this assumption, further suppose not Sline. Would Lumbo occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes not Blaf, Blaf causes Trune, Trune and Vork together cause Sline, Sline or Ziklo together cause Frim, and Frim causes Lumbo. We observed Vork.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Plim and Quaz, not Quaz causes Skul, Skul causes Triv, Triv causes Yex, Yex causes Rild, and Rild causes Jext.\n\nWould Jext occur if not Fizo and not Blorn?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn and Fizo together cause Plim, Plim and Blorn together cause Quaz, Quaz causes not Skul, Skul causes Triv, and Triv causes Jext.\n\nAssume not Fizo, and based on this assumption, further suppose not Quaz. Would Jext occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen and Nuv together cause Druk, and not Druk causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Druk. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb causes Glim, Glim causes Spog, and Spog causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex and Razz together cause not Zurn, Zurn causes Melf, Melf and Razz together cause Crip, and Crip causes Zlim. We observed Zurn\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Pex and Zurn, not Zurn causes Melf, Melf causes Crip, Crip causes Flen, Flen causes Tork, and Tork causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Pex. Would Zlim occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud and Praf together cause Wrenk, Wrenk causes Yobb, Yobb and Scud together cause Glim, Glim causes Spog, Spog causes Torb, and Torb causes Klep.\n\nWould Klep occur if not Praf and not Wrenk?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee and Druk, Splee causes not Blen, Blen or Druk causes Plog, Plog causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Druk. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Scud and Wrenk, not Wrenk causes Yobb, Yobb causes Glim, Glim or Wrenk causes Spog, Spog causes Torb, and Torb causes Klep.\n\nWould Klep occur if not Praf and not Vank?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee and Blen, Splee causes not Druk, Druk causes not Plog, Plog causes Skrim, Skrim causes Wrox.\n\nWould Wrox occur if not Nuv and not Splee?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Blaf causes Ziklo, Ziklo causes Trune, Trune causes Vork, Vork causes Sline, Sline and Frim causes Lumbo. Blaf~Bern(0.2). We observed Blaf and Frim.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank and Wrenk, Vank causes not Scud, Scud or Wrenk causes Klep.\n\nWould Klep occur if not Praf and not Vank?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Vank causes Praf, Praf or Vank causes Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb causes Glim, Glim causes Spog, and Spog causes Klep. Vank~Bern(0.4). We observed Scud.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf and Trune together cause Vork, and Vork causes Lumbo.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes not Pex, Pex and Zurn together cause Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Pex. Would Zlim occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank and Wrenk, Vank causes not Scud, Scud or Wrenk causes Yobb, Yobb causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz and Pex, Pex causes Zurn, Zurn cause not Melf, Melf causes not Crip, Crip causes not Flen, Flen causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Zurn. Would Zlim occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf and Trune together cause Vork, and Vork causes Lumbo.\n\nWould Lumbo occur if not Ziklo and not Vork?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen or not Splee causes Druk, Druk causes Plog and Skrim, Skrim causes Zimb, and Zimb and Plog together cause Wrox. We observed Druk\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz and Zurn, Razz causes not Pex, Pex or Zurn causes Melf, Melf causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Zurn. Would Zlim occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank and Scud together cause Wrenk, Wrenk causes Yobb, and Yobb causes Klep. We observed not Scud.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz and Glent together cause Pex, Pex causes not Zurn, and Zurn causes Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Blaf causes Ziklo, Ziklo causes Trune, Trune causes not Vork, Vork and Ziklo causes Sline, Sline causes Frim, and Frim causes Lumbo. Blaf~Bern(0.2). We observed Trune and Frim.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex and Glent together cause Zurn, Zurn causes Melf, Melf and Pex together cause Crip, Crip causes Flen, Flen causes Tork, and Tork causes Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes not Zurn, Zurn causes Melf, Pex causes Crip, Crip causes Flen, Flen and Melf causes Tork, and Tork causes Zlim. We observed Zurn\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes not Plim, Plim and Quaz together cause Skul, Skul causes Triv, Triv and Fizo together cause Yex, and Yex causes Jext. We observed Plim and Quaz\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz and Pex, Razz causes not Zurn, Pex or Zurn causes Melf, Melf causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Zurn. Would Zlim occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Blaf causes Ziklo, Ziklo or Blaf causes Trune, Trune causes Vork, Vork and Trune together cause Sline, Sline causes Frim, Frim causes Qado, Qado and Frim together cause Jurf, and Jurf causes Lumbo. Blaf~Bern(0.6). We observed Blaf.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank and Praf together cause not Scud, Scud and Vank together cause Wrenk, Wrenk causes Yobb, Yobb causes Glim, and Glim causes Klep. We observed Scud\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud causes Wrenk, and Wrenk and Praf together cause Klep.\n\nWould Klep occur if not Praf and not Wrenk?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz and Pex, Razz causes not Zurn, Zurn causes not Melf, Melf causes Crip, Crip causes Zlim.\n\nWould Zlim occur if not Glent and not Razz?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen and Splee together cause Druk, Druk causes Plog, Plog and Nuv together cause Skrim, and Skrim causes Wrox.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes not Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb or Praf causes Glim, Glim causes Spog, and Spog causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes Zurn, and Zurn and Glent together cause Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Pex. Would Zlim occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes not Scud, Vank causes Wrenk, Wrenk and Scud together cause Yobb, Yobb causes Glim, and Glim causes Klep. We observed Scud\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo or Blorn causes Plim, Plim causes Quaz, Quaz causes Skul, and Skul causes Jext. We observed Blorn.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen and Nuv together cause Druk, and not Druk causes Wrox.\n\nWould Wrox occur if not Nuv and not Druk?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen causes Druk, Druk causes Plog, Plog causes Skrim, Skrim and Druk together cause Zimb, Zimb causes not Yurd, and Yurd causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Plog. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Blorn causes Fizo, Fizo causes Plim, Blorn or Plim causes Quaz, Quaz and Plim together cause Skul, Skul causes Triv, Triv and Fizo together cause Yex, and Yex causes Jext. Blorn~Bern(0.6). We observed Quaz.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes Zurn, Zurn causes Melf, Melf and Razz together cause Crip, Crip causes Flen, Flen and Crip together cause Tork, and Tork causes Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes not Zurn, Zurn or Razz causes Melf, Melf causes Crip, and Crip causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz and Glent together cause Pex, Pex and Razz together cause Zurn, Zurn causes Melf, Melf causes Crip, and Crip causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Trune causes Ziklo, Ziklo causes Blaf, Trune causes Vork, Vork or Blaf together cause Sline, and Sline causes Lumbo. Trune~Bern(0.4). We observed Blaf\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee and Blen, Splee and Blen together cause Druk, and not Druk causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Druk. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes not Razz, Razz causes Pex, not Pex or Glent causes Zurn, Zurn causes Melf, and Melf causes Zlim. We observed Razz\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune and Ziklo together cause Vork, and not Vork causes Lumbo.\n\nAssume not Ziklo, and based on this assumption, further suppose not Vork. Would Lumbo occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes not Quaz, Quaz causes Skul, Skul causes Triv, Triv causes Yex, and Yex causes Jext.\n\nWould Jext occur if not Fizo and not Plim?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud and Vank together cause Wrenk, Wrenk causes Yobb, Yobb and Scud together cause Glim, and Glim causes Klep.\n\nAssume not Praf, and based on this assumption, further suppose not Wrenk. Would Klep occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen and Druk together cause Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Druk. Would Wrox occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen causes not Druk, Druk and Splee causes Plog, Druk causes Skrim, and Skrim causes Wrox. We observed Druk\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes not Razz, Razz causes Pex, Pex causes Zurn, and Zurn causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud and Vank together cause Wrenk, Wrenk causes Yobb, Yobb and Praf together cause Glim, and Glim causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune causes Vork, Vork and Trune together cause Sline, Sline causes Frim, Frim and Trune together cause Qado, and Qado causes Lumbo.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz and Glent together cause Pex, Pex and Razz together cause Zurn, Zurn causes Melf, Melf and Zurn together cause Crip, Crip causes Flen, and Flen causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank and Praf together cause Scud, Scud and Vank together cause Wrenk, Wrenk causes not Yobb, Yobb causes Glim, and Glim causes Klep.\n\nAssume not Praf, and based on this assumption, further suppose not Wrenk. Would Klep occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen causes not Druk, Druk causes Plog, Plog causes Skrim, Skrim causes Zimb, and Zimb causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Plog. Would Wrox occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb causes Glim, Glim causes not Spog, Spog causes Torb, and Torb causes Klep.\n\nAssume not Praf, and based on this assumption, further suppose not Yobb. Would Klep occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn and Fizo together cause Plim, Plim causes not Quaz, and Quaz causes Jext.\n\nWould Jext occur if not Fizo and not Quaz?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz and Glent together cause Pex, Pex causes Zurn, Zurn causes Melf, and Melf and Razz together cause Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Vank causes Praf, Praf and Vank causes Scud, Scud causes Wrenk, Wrenk causes Yobb, and Yobb causes Klep. Vank~Bern(0.4). We observed Scud.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz and Pex together cause Zurn, and Zurn causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn and Fizo together cause Plim, Plim causes Quaz, Quaz causes Skul, and Skul and Blorn together cause Jext.\n\nWould Jext occur if not Fizo and not Quaz?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Blaf causes Ziklo, Blaf or Ziklo causes Trune, Trune and Blaf together cause Vork, Vork causes Sline, Sline and Vork together cause Frim, Frim causes Qado, Qado causes Jurf, and Jurf causes Lumbo. Blaf~Bern(0.4). We observed Vork.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex and Glent together cause Zurn, Zurn causes Melf, Melf and Pex together cause Crip, Crip causes Flen, Flen causes Tork, and Tork causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Melf. Would Zlim occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes not Quaz, Quaz or Blorn causes Skul, Skul causes Triv, and Triv causes Jext.\n\nWould Jext occur if not Fizo and not Quaz?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes Quaz, Quaz causes Skul, Skul and Blorn together cause Triv, Triv causes Yex, Yex and Triv together cause Rild, and Rild causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz and Pex, Razz and Pex together cause not Zurn, Zurn causes not Melf and not Crip, Crip causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Zurn. Would Zlim occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes not Vank, Vank causes Scud, Scud and not Vank together cause Wrenk, Wrenk causes Yobb, Yobb causes Glim, Glim causes Spog, Spog causes Torb, and Torb causes Klep.\n\nWould Klep occur if not Praf and not Scud?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz and Glent together cause Pex, Pex causes Zurn, Zurn causes Melf, and Melf and Razz together cause Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo or Blaf causes Trune, Trune causes Vork, Vork and Trune together cause Sline, Sline causes Frim, Frim causes Qado, Qado and Frim together cause Jurf, and Jurf causes Lumbo. We observed Blaf.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud and Praf together cause Wrenk, and not Wrenk causes Klep.\n\nWould Klep occur if not Praf and not Wrenk?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Plim and Quaz, not Quaz causes Skul, Skul causes Triv, Triv or Quaz causes Yex, Yex causes Rild, and Rild causes Jext.\n\nWould Jext occur if not Fizo and not Blorn?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf and Trune together cause Vork, and not Vork causes Lumbo.\n\nWould Lumbo occur if not Ziklo and not Vork?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes Quaz, Quaz causes Skul, Skul causes Triv, Triv causes not Yex, Yex causes Rild, and Rild causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Splee causes Nuv, Nuv and Splee causes Blen, Blen causes Druk, Druk causes Plog, and Plog causes Wrox. Splee~Bern(0.4). We observed Blen.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes not Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb or Praf causes Glim, Glim causes Spog, and Spog causes Klep.\n\nWould Klep occur if not Praf and not Scud?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen or not Splee causes Druk, Druk causes Plog, Plog causes Skrim, Skrim causes Zimb, and Zimb and Plog together cause Wrox.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn and Fizo together cause Plim, Plim and Blorn together cause Quaz, Quaz causes not Skul, Skul causes Triv, and Triv causes Jext.\n\nWould Jext occur if not Fizo and not Quaz?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes Quaz, Quaz causes Skul, Skul causes Triv, Triv causes Yex, Yex and Blorn together cause Rild, Rild causes Vurn, and Vurn causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes not Blorn, Fizo causes Plim, Blorn and Plim and Quaz together cause Skul, Plim or Skul cause not Quaz, Quaz causes Triv, and Triv causes Jext. We observed Blorn\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex and Zurn together cause Melf, Melf causes Crip, Crip and Glent together cause Flen, and Flen causes Zlim.\n\nWould Zlim occur if not Glent and not Pex?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune causes Vork, Vork causes Sline, Sline causes Frim, Frim causes Qado, and Qado causes Lumbo.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes not Blaf, Blaf causes Trune, Trune and Blaf together cause Vork, and Vork causes Lumbo.\n\nWould Lumbo occur if not Ziklo and not Vork?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen and Druk, Druk causes Plog, Plog causes Wrox. We observed Blen\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank and Scud, Scud causes Wrenk, Wrenk cause not Yobb, Yobb causes Glim, Glim causes Spog, Spog causes Klep.\n\nAssume not Praf, and based on this assumption, further suppose not Wrenk. Would Klep occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes not Scud, Scud and Wrenk together cause Klep.\n\nAssume not Praf, and based on this assumption, further suppose not Scud. Would Klep occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes Quaz, Quaz or not Plim causes Skul, Skul causes Triv, Triv causes Yex, and Yex causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo or Blaf causes Trune, Trune causes Vork, Vork causes Lumbo. We observed Blaf.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz and Zurn, Razz causes not Pex, Pex or Zurn causes Melf, Melf causes Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes not Splee, Splee causes Blen, Blen causes Druk, Druk or Blen causes Plog, Plog causes Skrim, and Skrim causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Druk. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes not Trune, Trune or Vork causes Sline, Sline causes Lumbo.\n\nAssume not Ziklo, and based on this assumption, further suppose not Vork. Would Lumbo occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn and Quaz, Blorn causes not Plim, Plim or Quaz causes Skul, Skul causes Jext.\n\nWould Jext occur if not Fizo and not Quaz?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen causes Druk, Druk causes Plog, Plog causes Skrim, Skrim and Druk together cause Zimb, Zimb causes not Yurd, and Yurd causes Wrox.\n\nWould Wrox occur if not Nuv and not Blen?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim and Quaz together cause Skul, Skul causes Triv, Triv and Fizo together cause Yex, and Yex causes Jext.\n\nWould Jext occur if not Fizo and not Plim?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Splee causes Nuv, Nuv or Splee causes Blen, Blen causes Druk, Druk and Nuv together cause not Plog, Plog causes Skrim, and Skrim causes Wrox. Splee~Bern(0.6). We observed Blen.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Vank causes Praf, Praf and Vank together cause Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb causes Glim, Glim and Scud together cause Spog, and Spog causes Klep. Vank~Bern(0.6). We observed Scud.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud causes Wrenk, Wrenk or not Scud causes Yobb, Yobb causes Glim, Glim causes Spog, and Spog causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes not Blaf, Blaf causes Trune, Trune causes not Vork, Vork or Trune causes Sline, Sline causes Frim, and Qado, and Qado causes Lumbo. We observed Blaf\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes not Blen, Blen and Druk together cause Plog, Plog causes Skrim, Skrim and Nuv together cause Zimb, and Zimb causes Wrox. We observed Blen and Druk\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes Quaz, Quaz causes Skul, Skul causes Triv, Triv causes Yex, Yex and Skul causes Rild, and Rild causes Jext.\n\nWould Jext occur if not Fizo and not Quaz?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee and Druk, Splee causes not Blen, Blen or Druk causes Wrox.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Glent and Razz together cause Pex, Pex causes Zurn, Zurn or not Pex causes Melf, Crip, and Flen, not Flen causes Tork, and Tork causes Zlim. We observed Crip\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Razz causes Glent, Glent and Razz causes Pex, Pex causes Zurn, and Zurn causes Zlim. Razz~ Bern(0.2). We observed Pex\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes Zurn, Zurn causes Melf, Melf and Razz together cause Crip, Crip causes Flen, Flen and Crip together cause Tork, and Tork causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank and Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb causes Glim, Glim causes Spog and Torb, and Torb causes Klep.\n\nWould Klep occur if not Praf and not Vank?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn and Fizo together cause Plim, Plim and Blorn together cause Quaz, Quaz causes Skul, Skul and Quaz together cause Triv, Triv causes Yex, and Yex causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes not Blorn, Blorn causes Plim, Plim and not Blorn together cause Quaz, Quaz causes Skul, Skul causes Triv, Triv causes Yex, Yex causes Rild, and Rild causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen causes Druk, Druk and Blen together cause Plog, Plog causes Skrim, Skrim and Blen together cause Zimb, and Zimb causes Wrox.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes not Vank, Vank causes Scud, Scud or Praf causes Wrenk, Wrenk causes Yobb, and Yobb causes Klep.\n\nWould Klep occur if not Praf and not Wrenk?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo or Blorn causes Plim, Plim causes Quaz, Quaz and Plim together cause Skul, Skul causes Triv, Triv causes Yex, Yex and Triv together cause Rild, and Rild causes Jext. We observed Blorn.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune causes Vork, and Vork and Ziklo together cause Lumbo.\n\nAssume not Ziklo, and based on this assumption, further suppose not Trune. Would Lumbo occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz and Pex, Razz and Pex together cause not Zurn, Zurn causes Melf, Melf causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim and Fizo together cause not Quaz, Quaz causes Skul, Skul and Plim together cause Triv, Triv causes Yex, Yex causes Rild, and Rild causes Jext. We observed Quaz\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes not Pex, Razz causes Zurn, Zurn and Pex together cause Melf, Melf causes Crip, and Crip causes Zlim. We observed Pex\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Splee causes Nuv, Nuv causes Blen, Blen causes Druk, Druk causes Plog, and Plog causes Wrox. Splee~Bern(0.4). We observed Blen\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Splee causes Nuv, Nuv and Blen causes Druk, Druk and Blen together cause Plog, Plog causes Skrim, and Skrim causes Wrox. Splee~Bern(0.2). We observed Blen and Skrim.\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Fizo and Blorn together cause Plim, Plim causes Quaz, Quaz or not Plim causes Skul, Skul causes Triv, Triv causes Yex, Yex causes Rild, and Rild causes Jext.\n\nAssume not Fizo, and based on this assumption, further suppose not Skul. Would Jext occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent and Razz together cause Pex, Pex causes Zurn, Zurn and Glent together cause Melf, Melf causes Crip, and Crip causes Zlim. We observed Razz.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Razz causes Glent, Glent or Pex causes Zurn, Zurn and Pex together cause Melf, Melf causes Crip, and Crip causes Zlim. Razz~Bern(0.2). We observed Pex and Crip.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Trune causes Blaf, Blaf causes Ziklo, Trune or Ziklo causes Vork, Vork causes Sline, Sline causes Frim, Frim causes Qado, Qado causes Jurf, and Jurf causes Lumbo. Trune~Bern(0.4). We observed Blaf.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz and Pex, Razz and Pex together cause not Zurn, Zurn causes Melf, Melf causes Zlim.\n\nWould Zlim occur if not Glent and not Razz?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn and Plim, Plim causes Quaz, Quaz causes Skul, Skul causes Triv, Triv causes Yex and Rild, and Rild causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune causes not Vork, Vork or Blaf causes Sline, Sline causes Frim, and Frim causes Lumbo.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo and Blorn together cause Plim, Plim causes Quaz, Quaz and Fizo together cause Skul, Skul causes Triv, and Triv causes Jext. We observed Blorn.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes not Vank, Vank causes Scud, Scud and not Vank together cause Wrenk, Wrenk causes Yobb, Yobb causes Glim, Glim causes Spog, Spog causes Torb, and Torb causes Klep.\n\nAssume not Praf, and based on this assumption, further suppose not Yobb. Would Klep occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes Zurn, Zurn and Razz together cause Melf, and Melf causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Blorn causes Fizo, Blorn causes Plim, Plim or Fizo causes Quaz, Quaz causes Skul, Skul and Plim together cause Triv, Triv causes Yex, Yex causes Rild, and Rild causes Jext. Blorn~Bern(0.6). We observed Blorn.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Vank causes Praf, Praf causes Scud, Vank or Scud causes Wrenk, Wrenk and Scud together cause Yobb, Yobb causes Glim, Glim and Praf together cause Spog, and Spog causes Klep. Vank~Bern(0.6). We observed Wrenk.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Scud and Wrenk, not Wrenk causes Yobb, Yobb causes Glim, Glim causes Spog, Spog causes Torb, and Torb causes Klep.\n\nAssume not Praf, and based on this assumption, further suppose not Scud. Would Klep occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Blorn causes Fizo, Fizo and Plim causes Quaz, Quaz and Plim together cause Skul, Skul causes Triv, and Triv causes Jext. Blorn~Bern(0.2). We observed Plim and Triv.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim and Blorn together cause Quaz, Quaz causes Skul, Skul and Fizo together cause Triv, and Triv causes Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Blaf causes Ziklo, Ziklo and Blaf causes Trune, Trune causes Vork, and Vork causes Lumbo. Blaf~ Bern(0.2). We observed Trune\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf or Vank causes Scud, Scud causes Wrenk, Wrenk causes Klep. We observed Vank.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Vank causes Praf, Vank causes Scud, Scud causes not Wrenk, Wrenk and Praf causes Yobb, and Yobb causes Klep.  Vank~Bern(0.2). We observed Scud.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf and Trune, Trune causes Vork, Vork causes not Sline, Sline causes not Frim, Frim causes Qado, Qado causes Lumbo.\n\nWould Lumbo occur if not Ziklo and not Blaf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee and Blen, Blen causes Druk, Druk causes Plog, Plog causes Skrim, Skrim causes Zimb and Yurd, and Yurd causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Plog. Would Wrox occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes Quaz, Quaz causes Skul, Skul and Blorn together cause Triv, Triv causes Yex, Yex and Triv together cause not Rild, and Rild causes Jext. We observed Rild\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf and Ziklo together cause Trune, Trune causes Vork, Vork causes Sline, and Sline and Blaf together cause Lumbo.\n\nAssume not Ziklo, and based on this assumption, further suppose not Vork. Would Lumbo occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen causes Druk, Druk causes Plog, Plog causes Skrim, Skrim causes not Zimb, Zimb causes Yurd, and Yurd causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Plog. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud causes Wrenk, and Wrenk causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn and Plim, Blorn and Plim together cause not Quaz, Quaz causes not Skul and not Triv, Triv causes Jext.\n\nWould Jext occur if not Fizo and not Blorn?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen causes Druk, Druk causes Plog, Plog causes Skrim, Skrim and Druk together cause Zimb, Zimb causes not Yurd, and Yurd causes Wrox. We observed Yurd\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud and Vank together cause Wrenk, Wrenk causes Yobb, Yobb and Scud together cause Glim, and Glim causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf causes Trune, Trune causes Vork, Vork causes Sline, Sline causes Frim, Frim causes not Qado, Qado causes Jurf, and Jurf causes Lumbo.\n\nWould Lumbo occur if not Ziklo and not Trune?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes Zurn, Zurn or not Pex causes Melf, Melf causes Crip, Crip causes Flen, and Flen causes Zlim.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes Zurn, Zurn and Razz together cause Melf, and Melf causes Zlim.\n\nWould Zlim occur if not Glent and not Zurn?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Blaf causes Ziklo, Blaf and Ziklo together cause Trune, Trune and Blaf together cause Vork, Vork causes Sline, Sline and Vork together cause Frim, Frim causes Qado, and Qado causes Lumbo. Blaf~Bern(0.6). We observed Vork.\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes not Blen, Blen or Druk causes Plog, Plog causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Druk. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee causes Blen, Blen causes Druk, Druk causes Plog, Plog and Splee together cause Skrim, Skrim causes Zimb, Zimb and Skrim together cause Yurd, and Yurd causes Wrox.\n\nWould Wrox occur if not Nuv and not Druk?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb and Vank together cause Glim, Glim causes Spog, Spog and Glim together cause Torb, and Torb causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud and Praf together cause Wrenk, Wrenk causes Yobb, Yobb and Scud together cause Glim, Glim causes Spog, Spog causes Torb, and Torb causes Klep.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn causes Plim, Plim causes Quaz, and Quaz causes Jext.\n\nAssume not Fizo, and based on this assumption, further suppose not Skul. Would Jext occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes Pex, Pex causes not Zurn, Zurn or Razz causes Melf, Melf causes Crip, and Crip causes Zlim.\n\nAssume not Glent, and based on this assumption, further suppose not Zurn. Would Zlim occur?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf and Trune together cause Vork, and not Vork causes Lumbo.\n\nAssume not Ziklo, and based on this assumption, further suppose not Vork. Would Lumbo occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Razz causes not Glent, Glent causes Pex, Razz or Glent together cause Zurn, and Zurn causes Zlim. Razz~ Bern(0.6). We observed Pex occur\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes not Splee, Splee causes Blen, Blen causes Druk, Druk or Blen causes Plog, Plog causes Skrim, and Skrim causes Wrox.\n\nWould Wrox occur if not Nuv and not Druk?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Blen and Druk, not Druk causes Plog, Plog causes Skrim, Skrim causes Zimb, Zimb causes Yurd, and Yurd causes Wrox.\n\nAssume not Nuv, and based on this assumption, further suppose not Blen. Would Wrox occur?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud and Vank together cause Wrenk, Wrenk causes Yobb, Yobb and Praf together cause Glim, and Glim causes Klep.\n\nWould Klep occur if not Praf and not Wrenk?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf causes not Vank, Vank and Scud together cause Wrenk, Wrenk causes Yobb, and Yobb causes Klep. We observed Scud.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Fizo causes Blorn, Blorn and Fizo together cause Plim, Plim causes Quaz and Skul, not Skul cause Jext.\n\nWould Jext occur if not Fizo instead of Fizo?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Ziklo causes Blaf, Blaf and Ziklo together cause not Trune, Trune causes Vork, Vork causes not Sline, and Sline causes Lumbo. We observed Vork\n\nWould Lumbo occur if not Ziklo instead of Ziklo?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Praf or Vank causes Scud, Scud causes Wrenk, Wrenk causes Yobb, and Yobb causes Klep. We observed Vank.\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Vank causes not Praf, Praf causes Scud, Vank and Praf together cause Wrenk, and Wrenk causes Klep. Vank~ Bern(0.6).\n\nWould Klep occur if not Praf instead of Praf?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes not Razz, Glent causes Pex, Razz and Pex and Zurn together cause Melf, Pex or Melf cause not Zurn, Zurn causes Crip, and Crip causes Zlim. We observed Razz\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Razz causes Glent, Razz and Pex together cause not Zurn, Zurn causes Melf, and Melf causes Zlim. Razz~Bern(0.4). We observed not Zurn.\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Splee causes not Nuv, Nuv causes Blen, Splee or Nuv together cause Druk, and Druk causes Wrox. Splee~ Bern(0.6). We observed Blen occur\n\nWould Wrox occur if not Nuv instead of Nuv?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Glent causes Razz, Razz causes not Pex, Pex causes Zurn, Zurn and Pex together cause Melf, Melf causes Crip, Crip and Pex together cause Flen, and Flen causes Zlim. We observed Pex\n\nWould Zlim occur if not Glent instead of Glent?",
+    "answer": "yes"
+  },
+  {
+    "question": "We know that Praf causes Vank, Vank causes Scud, Scud causes Wrenk, Wrenk causes Yobb, Yobb and Vank together cause Glim, Glim causes Spog, Spog and Glim together cause Torb, and Torb causes Klep.\n\nWould Klep occur if not Praf and not Wrenk?",
+    "answer": "no"
+  },
+  {
+    "question": "We know that Nuv causes Splee, Splee and Nuv together cause Blen, Blen causes Druk, Druk or not Splee causes Plog, Plog causes Skrim, and Skrim causes Wrox.\n\nWould Wrox occur if not Nuv and not Druk?",
+    "answer": "yes"
+  }
+]
