@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from rouge_score import rouge_scorer
 
 # —— 轻量模块可在请求里 import；会初始化 CUDA 的库放到 lifespan 里 —— #
 # from signal_utils import extract_XY  # 如果很轻量，也可以放到外面
@@ -80,21 +81,26 @@ async def get_reward2(request: Request):
 
             Z = json_data.get("prompt_str", "")
             resp = json_data.get("response_str", "")
+            ground_truth = json_data.get("ground_truth", "")
             if isinstance(resp, list):
                 resp = resp[0]
 
+            scorer = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)  # :contentReference[oaicite:0]{index=0}
+            scores = scorer.score(ground_truth, resp)                # :contentReference[oaicite:1]{index=1}
+            rougel_f = scores["rougeL"].fmeasure 
             X, Y = extract_XY(resp)
 
             # 你的 calc.compute 内部最好包 with torch.inference_mode()，
             # 并适时释放大 tensor，结束后可以 empty_cache（见下方注释）
             s_ZX, s_ZY, s_XY = calc.compute(Z, X, Y)
-            p=2.0
+            p=1.3
             total = (abs(s_ZX)**p + abs(s_ZY)**p + abs(s_XY)**p)**(1.0/p)
-            return s_ZX, s_ZY, s_XY, total
+            return rougel_f, s_ZX, s_ZY, s_XY, total
 
-        s_ZX, s_ZY, s_XY, total = await asyncio.to_thread(run_compute)
+        rougel_f, s_ZX, s_ZY, s_XY, total = await asyncio.to_thread(run_compute)
 
         result = {
+            "RougeL": round(float(rougel_f), 6),
             "S(Z→X)": round(float(s_ZX), 6),
             "S(Z→Y)": round(float(s_ZY), 6),
             "S(X→Y)": round(float(s_XY), 6),
