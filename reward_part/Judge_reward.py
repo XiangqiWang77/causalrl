@@ -1,73 +1,49 @@
-from transformers import pipeline
+import os
+import requests
 
-# 使用 facebook/bart-large-mnli 模型初始化 judge model 的 zero-shot-classification pipeline
-judge_classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+# DeepInfra 配置
+DEEPINFRA_BASE_URL = "https://api.deepinfra.com/v1/openai"
+DEEPINFRA_API_KEY = os.getenv("DEEPINFRA_API_KEY")
 
-#judge_classifier = pipeline(
-#    "zero-shot-classification",
-#    model="cross-encoder/nli-distilroberta-base"
-#)
-import numpy as np
-def add_gaussian_perturbation(x, sigma=0.1):
-    perturbation = np.random.normal(0, sigma)
-    x_perturbed = x + perturbation
-    return np.clip(x_perturbed, 0.0, 1.0)
+def deepinfra_chat(messages, model="meta-llama/Meta-Llama-3.1-8B-Instruct", temperature=0.7):
+    url = f"{DEEPINFRA_BASE_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {DEEPINFRA_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": model,
+        "messages": messages,
+        "temperature": temperature
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+    return response.json()
 
-
-def compute_judge_score(question: str, candidate: str, reference: str) -> float:
+def evaluate_responses1(question: str, response: str, ground_truth: str) -> float:
     """
-    使用 judge model 判断候选答案是否与 ground truth 匹配，并返回归一化的得分（范围 0 到 1）。
-
-    构造拼接的 prompt，将问题、候选答案和参考答案整合后提问：
-    "Does the candidate answer match the ground truth? Answer yes or no."
-    
-    Args:
-        question (str): 问题文本
-        candidate (str): 候选答案
-        reference (str): 参考答案（ground truth）
-    
-    Returns:
-        float: 归一化得分，取 "yes" 的概率，值域在 0 到 1 之间。
+    Use an LLM to judge whether `response` matches `ground_truth`.
+    Returns 1 if the model answers 'yes', otherwise 0.
     """
+    response=response[:512]
+    ground_truth=ground_truth[:256]
     prompt = (
-        f"Question: {question}\n"
-        f"Candidate Answer: {candidate}\n"
-        f"Ground Truth: {reference}\n"
-        "Does the candidate answer match the ground truth? Answer yes or no."
+        f"Question: {question}\n\n"
+        f"Candidate Answer: {response}\n\n"
+        f"Ground Truth: {ground_truth}\n\n"
+        "Does the candidate answer match the ground truth?  If you are not certain of yes or no, reply ambiguous. Reply with only 'yes' or 'no'or 'ambiguous'. Don't generate anything else! Just yes or no or ambiguous. Please be noted that ambiguous and no should be used sparingly only if you are certain about it."
     )
-    candidate_labels = ["yes", "no"]
-    
-    # 使用零样本分类模型进行判断
-    result = judge_classifier(prompt, candidate_labels=candidate_labels)
-    
-    # 提取模型返回中 "yes" 对应的概率，该概率已经归一化到 0 到 1
-    yes_score = 0.0
-    for label, score in zip(result["labels"], result["scores"]):
-        if label.lower() == "yes":
-            yes_score = score
-            break
-            
-    return yes_score
-
-def evaluate_responses1(question: str, reference: str, candidate: str) -> float:
-    """
-    对单个候选回答进行评估，利用 judge model 计算候选答案与参考答案匹配的得分。
-
-    Args:
-        question (str): 问题文本
-        reference (str): 参考答案（ground truth）
-        candidate (str): 候选回答
-    
-    Returns:
-        float: Judge 得分（正值表示候选答案匹配程度较好）
-    """
-    #print("Evaluating candidate answer...")
-    #print("Question:", question)
-    #print("Candidate Answer:", candidate)
-    #print("Ground Truth:", reference)
-    
-    score = compute_judge_score(question, candidate, reference)
-    
-    print("Judge Score:", score)
-    return score
-
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant"},
+        {"role": "user", "content": prompt}
+    ]
+    #print(messages)
+    #If the candidate answer is semantically correct, close in meaning, or approximately matches the ground truth, output yes. Accept partial correctness, paraphrasing, minor numerical or formatting differences, and extra non-conflicting details as matches. Output no only for clear, significant deviations or contradictions. If you are not certain of yes or no, reply ambiguous. Reply with only 'yes' or 'no'or 'ambiguous'. Don't generate anything else! Just yes or no or ambiguous."
+    model_reply = deepinfra_chat(messages)["choices"][0]["message"]["content"].strip().lower()
+    #print(model_reply)
+    if model_reply == "yes":
+        return 1.0
+    elif model_reply == "no":
+        return 0.0
+    else:
+        return 0.5
