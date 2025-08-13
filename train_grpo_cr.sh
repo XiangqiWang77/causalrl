@@ -7,17 +7,17 @@ export CUDA_VISIBLE_DEVICES=0,1,2
 set -x
 
 # export RAY_DEBUG=1
-export WANDB_API_KEY=3f95fb3793cb54b9d6431d66d888927fb8b6d782
+export WANDB_API_KEY=wandbAPI
 ray stop
-ray start --head --node-ip-address=0.0.0.0 --port=6378 --dashboard-host=0.0.0.0 --dashboard-port=8265 --ray-debugger-external --num-gpus 3
+ray start --head --node-ip-address=0.0.0.0 --port=6378 --dashboard-host=0.0.0.0 --dashboard-port=8265 --ray-debugger-external --num-gpus 8
 
 
 # 数据路径
-data_dir=/users/xwang76/nano_rl/data
+data_dir=./data
 # 模型路径
-model_path=/users/xwang76/hf_models/qwen3-4b
+model_path=~/hf_models/qwen3-4b
 cur_task=qwen34b
-save_model_checkpoint=/users/xwang76/nano_rl/train_rlhf_on_cluster/train_models/$cur_task
+save_model_checkpoint=./train_rlhf_on_cluster/train_models/$cur_task
 
 echo "在主节点上启动训练..."
 python3 -m verl.trainer.main_ppo \
@@ -51,9 +51,9 @@ python3 -m verl.trainer.main_ppo \
     algorithm.kl_ctrl.kl_coef=0.001 \
     trainer.critic_warmup=0 \
     trainer.logger=['console','wandb'] \
-    trainer.project_name='qwen34b' \
+    trainer.project_name='causalGRPO' \
     trainer.experiment_name=$cur_task \
-    trainer.n_gpus_per_node=3 \
+    trainer.n_gpus_per_node=8 \
     trainer.nnodes=1 \
     trainer.save_freq=500 \
     trainer.default_local_dir=$save_model_checkpoint \
