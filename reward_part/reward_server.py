@@ -64,6 +64,80 @@ app.add_middleware(
 )
 
 
+import math
+
+def minkowski_reward(s1, s2, s3, w1, w2, w3, p, eps=1e-12):
+    """
+    Robust weighted Minkowski aggregation for 3 signals.
+    Inputs:
+      s1,s2,s3: signals (expected in [0,1]); will be clipped to [0,1].
+      w1,w2,w3: non-negative weights (can be any non-negative scale).
+      p: Minkowski exponent. Supports p→0 (geometric mean), large |p|, and standard p.
+      eps: small constant for numerical stability.
+    Output:
+      total in [0,1] if inputs in [0,1] and weights non-negative.
+    """
+
+    # 1) clip signals into [0,1] to avoid out-of-range explosions
+    s = [min(1.0, max(0.0, float(x))) for x in (s1, s2, s3)]
+
+    # 2) sanitize weights and normalize
+    w = [max(0.0, float(x)) for x in (w1, w2, w3)]
+    wsum = w[0] + w[1] + w[2]
+    if wsum <= 0:
+        # no weight info; default to uniform
+        w = [1.0, 1.0, 1.0]
+        wsum = 3.0
+    wn = [wi / wsum for wi in w]
+
+    # 3) handle special/edge cases of p
+    # p -> +inf => max; p -> -inf => min
+    if p is None or (isinstance(p, float) and math.isnan(p)):
+        raise ValueError("p must be a real number.")
+    if p >= 1e6:
+        return max(s)
+    if p <= -1e6:
+        return min(s)
+
+    # p ≈ 0 => weighted geometric mean (limit of Minkowski mean)
+    if abs(p) < 1e-6:
+        # use log-sum to avoid underflow; clamp by eps
+        log_terms = [wn[i] * math.log(max(s[i], eps)) for i in range(3)]
+        return math.exp(sum(log_terms))
+
+    # If p < 0 and any s_i == 0, the term s_i^p is undefined/infinite.
+    if p < 0 and any(si <= 0.0 for si in s):
+        # define a safe fallback: treat zeros as eps to avoid inf
+        s = [max(si, eps) for si in s]
+
+    # 4) normalized Minkowski mean (a.k.a. power mean) with weights:
+    # M_p = ( sum_i w_i * s_i^p / sum_i w_i )^(1/p)  => with wn it's just (sum wn * s_i^p)^(1/p)
+    acc = 0.0
+    for si, wi in zip(s, wn):
+        # fast path for si in {0,1}
+        if si == 0.0:
+            term = 0.0
+        elif si == 1.0:
+            term = wi  # 1^p == 1
+        else:
+            # compute si^p stably via exp(p*log(si))
+            term = wi * math.exp(p * math.log(si))
+        acc += term
+
+    # guard tiny negatives from round-off
+    acc = max(acc, 0.0)
+
+    # final power 1/p; use exp((1/p)*log(acc)) for stability
+    # when acc==0, result is 0 for p>0; for p<0, it's undefined→return 0 as safe floor
+    if acc == 0.0:
+        return 0.0 if p > 0 else 0.0
+
+    total = math.exp((1.0 / p) * math.log(acc))
+
+    # final clamp to [0,1] due to tiny numeric drift
+    return min(1.0, max(0.0, total))
+
+
 @app.post("/get_reward2")
 async def get_reward2(request: Request):
     """
@@ -78,6 +152,7 @@ async def get_reward2(request: Request):
         def run_compute():
             # 轻量工具可以这里 import
             from signal_utils import extract_XY
+            #from bandit import LinUCB
 
             Z = json_data.get("prompt_str", "")
             resp = json_data.get("response_str", "")
@@ -88,16 +163,15 @@ async def get_reward2(request: Request):
             # 你的 calc.compute 内部最好包 with torch.inference_mode()，
             # 并适时释放大 tensor，结束后可以 empty_cache（见下方注释）
             s_ZX, s_ZY, s_XY = calc.compute(Z, X, Y)
-            p=1.3
-            total = (abs(judgescore)**p+abs(s_ZX)**p + abs(s_ZY)**p + abs(s_XY)**p)**(1.0/p)
-            return judgescore, s_ZX, s_ZY, s_XY, total/4
+            p,w1,w2,w3=0.3, 1/3, 1/3, 1/3
+            total = minkowski_reward(judgescore, s_ZX, s_XY, w1, w2, w3, p)
+            return judgescore, s_ZX, s_XY, total
 
-        judgescore, s_ZX, s_ZY, s_XY, total = await asyncio.to_thread(run_compute)
+        judgescore, s_ZX, s_XY, total = await asyncio.to_thread(run_compute)
 
         result = {
             "Judgescore": round(float(judgescore), 6),
             "S(Z→X)": round(float(s_ZX), 6),
-            "S(Z→Y)": round(float(s_ZY), 6),
             "S(X→Y)": round(float(s_XY), 6),
             "score": round(float(total), 6),
         }
