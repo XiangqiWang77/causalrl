@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
 
     # 这些 import / 构造会触发 CUDA 初始化，务必放在这里而不是请求里
     from modi_signal import RMSNormalizedSignalCalculator  # 你的类
-    model_dir = "/users/xwang76/hf_models/qwen3-4b"
+    model_dir = "~/hf_models/qwen3-4b"
 
     # 只加载一次
     calc = RMSNormalizedSignalCalculator(model_dir, device="cuda")
