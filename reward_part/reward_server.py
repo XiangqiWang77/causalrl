@@ -20,8 +20,8 @@ MAX_BATCH_SIZE = int(os.environ.get("MAX_BATCH_SIZE", "8"))
 MAX_WAIT_MS   = int(os.environ.get("MAX_WAIT_MS", "8"))
 
 # --- 显存安全相关（可用环境变量覆盖） ---
-MAX_TOKENS_PER_BATCH   = int(os.environ.get("MAX_TOKENS_PER_BATCH", "4096"))
-CUDA_FREE_MEM_FRACTION = float(os.environ.get("CUDA_FREE_MEM_FRACTION", "0.85"))
+MAX_TOKENS_PER_BATCH   = int(os.environ.get("MAX_TOKENS_PER_BATCH", "1024"))
+CUDA_FREE_MEM_FRACTION = float(os.environ.get("CUDA_FREE_MEM_FRACTION", "0.9"))
 OOM_BACKOFF_STEPS      = int(os.environ.get("OOM_BACKOFF_STEPS", "4"))
 CLEAR_CACHE_EVERY      = int(os.environ.get("CLEAR_CACHE_EVERY", "20"))
 RESERVED_WATERMARK     = float(os.environ.get("RESERVED_WATERMARK", "0.92"))
