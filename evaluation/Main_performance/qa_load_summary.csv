@@ -1,0 +1,5 @@
+file,exists,total,parsed
+bbeh_multistep_arithmetic_qa.json,True,200,200
+cladder_qa.json,True,8674,8674
+legalbench_legal_reasoning_causality_qa.json,True,58,58
+LogiQA.json,True,110,110
