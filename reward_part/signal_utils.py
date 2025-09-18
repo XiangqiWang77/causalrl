@@ -1,181 +1,97 @@
 import re
-from typing import List
-import torch
-import re
-import torch
-from transformers import (
-    AutoModelForCausalLM, AutoTokenizer,
-    StoppingCriteria, StoppingCriteriaList
-)
 from typing import Tuple
 
-MODEL_NAME = "/users/xwang76/hf_models/qwen3-4b"
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=False)
-model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=torch.bfloat16, device_map="auto")
-model.eval()
-device = next(model.parameters()).device
+# Strict tags: <finalanswer>...</finalanswer>
+_TAG_OPEN  = re.compile(r'(?is)<\s*finalanswer\s*>')
+_TAG_CLOSE = re.compile(r'(?is)<\s*/\s*finalanswer\s*>')
 
-class StopOnSubstr(StoppingCriteria):
-    def __init__(self, stop_str: str, tokenizer: AutoTokenizer):
-        super().__init__()
-        self.stop_ids = tokenizer(stop_str, add_special_tokens=False).input_ids
+# Minimal compatibility: "finalanswer>" (no '<', no closing tag)
+_ARROW_OPEN = re.compile(r'(?is)\bfinalanswer\s*>')
 
-    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor, **kwargs):
-        if input_ids.shape[-1] < len(self.stop_ids):
-            return False
-        return input_ids[0, -len(self.stop_ids):].tolist() == self.stop_ids
+# 句末边界：句号/问号/感叹号/省略号 + 可选右引号/右括号/方括号/书名号
+_SENT_BOUNDARY = re.compile(
+    r'(?us)(?<=[\.\!\?…。！？])(?:\s+|$)'
+)
 
-# prepare stopping criteria
-stop_at_answer    = StoppingCriteriaList([StopOnSubstr("<finalanswer>", tokenizer)])
-stop_at_endanswer = StoppingCriteriaList([StopOnSubstr("</finalanswer>", tokenizer)])
+def _strip_keep(s: str) -> str:
+    """与原版一致：两端去空白，不改变中间格式"""
+    return s.strip() if isinstance(s, str) else ""
 
-def g(Z: str, max_new_tokens: int = 512) -> str:
+def _extract_last_sentence_fallback(text: str) -> Tuple[str, str]:
     """
-    g(Z) → X: generate the chain-of-thought up to (but not including) "<finalanswer>"
+    无标记时：将最后一句作为 Y，之前的作为 X。
+    - 优先按句末边界切分（中英符号）
+    - 若无法可靠切分，则用最后一个非空行
+    - 若仍无法定位，则 (X="", Y=text)
     """
-    inputs = tokenizer(Z, return_tensors="pt").to(device)
-    out_ids = model.generate(
-        **inputs,
-        max_new_tokens=max_new_tokens,
-        stopping_criteria=stop_at_answer,
-        pad_token_id=tokenizer.eos_token_id,
-    )[0]
-    full = tokenizer.decode(out_ids, skip_special_tokens=False)
-    # strip Z prefix and the trailing "<answer>"
-    X = full[len(Z):].rsplit("<finalanswer>", 1)[0]
-    return X.strip()
+    raw = text if isinstance(text, str) else ("" if text is None else str(text))
+    s = raw.rstrip()
 
-def f(Z: str, X: str, max_new_tokens: int = 128) -> str:
-    """
-    f(Z, X) → Y: given Z and CoT X, generate the final answer Y up to "</finalanswer>"
-    """
-    prompt = Z + X + "<finalanswer>"
-    inputs = tokenizer(prompt, return_tensors="pt").to(device)
-    out_ids = model.generate(
-        **inputs,
-        max_new_tokens=max_new_tokens,
-        stopping_criteria=stop_at_endanswer,
-        pad_token_id=tokenizer.eos_token_id,
-    )[0]
-    full = tokenizer.decode(out_ids, skip_special_tokens=False)
-    # strip prompt prefix and the trailing "</finalanswer>"
-    Y = full[len(prompt):].rsplit("</finalanswer>", 1)[0]
-    return Y.strip()
+    if not s:
+        return "", ""
+
+    # 用句末边界进行“近似句子分割”，尽量保留原始空白
+    # 思路：通过边界位置 split，不破坏标点本身
+    parts = re.split(_SENT_BOUNDARY, s)
+    # re.split 会丢失分隔符，但我们只需要最后一段文本作为“最后一句”
+    if len(parts) >= 2:
+        # 最后一段非空即为最后一句；若最后一段为空（比如文本以换行结尾），找倒数第一个非空
+        for idx in range(len(parts) - 1, -1, -1):
+            if parts[idx].strip():
+                last_sent = parts[idx]
+                break
+        else:
+            # 都是空的：退化到整段
+            return "", s.strip()
+
+        # 在原始文本中从右往左定位该最后一句，保持原格式
+        pos = s.rfind(last_sent)
+        if pos != -1:
+            x = s[:pos].rstrip()
+            y = s[pos:].strip()
+            return x, y
+
+    # 若句末分割失败，退化为“最后一个非空行”
+    lines = [ln for ln in s.splitlines() if ln.strip()]
+    if len(lines) >= 2:
+        last_line = lines[-1]
+        pos = s.rfind(last_line)
+        if pos != -1:
+            x = s[:pos].rstrip()
+            y = s[pos:].strip()
+            return x, y
+
+    # 再不行：把整段当作最后一句
+    return "", s.strip()
 
 def extract_XY(resp: str) -> Tuple[str, str]:
     """
-    Given a model output string resp containing "<finalanswer>Y</finalanswer>",
-    return (X, Y) where:
-      X = resp before "<finalanswer>"
-      Y = the text inside "<finalanswer>…</finalanswer>"
+    X = text before the final-answer marker
+    Y = text inside <finalanswer>...</finalanswer>, or after 'finalanswer>' if tags are absent
+    Fallback: if no markers, return (X=all before last sentence, Y=last sentence)
+    No fuzzy markers. No heuristics beyond sentence fallback.
     """
-    m = re.search(r"<finalanswer>(.*?)</finalanswer>", resp, re.DOTALL)
-    Y = m.group(1).strip() if m else ""
-    X = resp.split("<finalanswer>")[0]
-    return X, Y
+    if not isinstance(resp, str):
+        resp = "" if resp is None else str(resp)
+    text = resp
 
+    # 1) Strict <finalanswer>...</finalanswer>
+    m_open = _TAG_OPEN.search(text)
+    if m_open:
+        x = _strip_keep(text[:m_open.start()])
+        m_close = _TAG_CLOSE.search(text, m_open.end())
+        if m_close:
+            y = _strip_keep(text[m_open.end():m_close.start()])
+        else:
+            y = _strip_keep(text[m_open.end():])
+        return x, y
 
+    # 2) Minimal fall-back: 'finalanswer>' (case-insensitive)
+    m_arrow = _ARROW_OPEN.search(text)
+    if m_arrow:
+        x = _strip_keep(text[:m_arrow.start()])
+        y = _strip_keep(text[m_arrow.end():])
+        return x, y
 
-
-def _compute_grads_matrix(full: str, pos: int, p: float) -> torch.Tensor:
-    """
-    Runs a forward+backward pass on `full` (tokenized without special tokens),
-    takes the p-norm of logits at position `pos`, backprops, and returns the
-    gradient tensor [seq_len, embed_dim].
-    """
-    enc = tokenizer(full, return_tensors="pt", add_special_tokens=False).to(device)
-    ids = enc.input_ids              # [1, seq_len]
-    mask = torch.ones_like(ids)
-    embeds = model.get_input_embeddings()(ids).detach()
-    embeds.requires_grad_(True)
-
-    out = model(inputs_embeds=embeds, attention_mask=mask)
-    logits = out.logits[:, pos, :]    # [1, vocab_size]
-    score = logits.norm(p=p)
-    score.backward()
-
-    return embeds.grad[0]             # [seq_len, embed_dim]
-
-def _split_sentences(text: str) -> List[str]:
-    """
-    Naively split on sentence-ending punctuation.
-    """
-    sents = re.split(r'(?<=[\.!?])\s+', text)
-    return [s.strip() for s in sents if s.strip()]
-
-def S_ZY(Z: str, p: float = 2.0) -> float:
-    """
-    Direct Causal Effect of Z on Y: S(Z→Y)
-    """
-    X = g(Z)
-    Y = f(Z, X)
-    full = Z + X + "<finalanswer>" + Y + "</finalanswer>"
-
-    len_Z = len(tokenizer(Z, add_special_tokens=False).input_ids)
-    len_X = len(tokenizer(X, add_special_tokens=False).input_ids)
-    pos_Y = len(tokenizer(full, add_special_tokens=False).input_ids) - 1
-
-    grads = _compute_grads_matrix(full, pos_Y, p)
-    # gradient norm over Z segment
-    return grads[:len_Z].norm(p=p).item()
-
-def S_XY(Z: str, p: float = 2.0) -> float:
-    """
-    Direct Causal Effect of X on Y: S(X→Y)
-    """
-    X = g(Z)
-    Y = f(Z, X)
-    full = Z + X + "<finalanswer>" + Y + "</finalanswer>"
-
-    len_Z = len(tokenizer(Z, add_special_tokens=False).input_ids)
-    len_X = len(tokenizer(X, add_special_tokens=False).input_ids)
-    pos_Y = len(tokenizer(full, add_special_tokens=False).input_ids) - 1
-
-    grads = _compute_grads_matrix(full, pos_Y, p)
-    # gradient norm over X segment
-    return grads[len_Z:len_Z+len_X].norm(p=p).item()
-
-def S_ZX(Z: str, p: float = 2.0) -> float:
-    """
-    Direct Causal Effect of Z on X: S(Z→X)
-    """
-    X = g(Z)
-    full = Z + X
-
-    len_Z = len(tokenizer(Z, add_special_tokens=False).input_ids)
-    len_X = len(tokenizer(X, add_special_tokens=False).input_ids)
-    pos_X = len(tokenizer(full, add_special_tokens=False).input_ids) - 1
-
-    grads = _compute_grads_matrix(full, pos_X, p)
-    # gradient norm over Z segment
-    return grads[:len_Z].norm(p=p).item()
-
-def S_X_in(Z: str, p: float = 2.0) -> float:
-    """
-    Internal coherence of X: average DCE among all sentence pairs in X
-    """
-    X = g(Z)
-    full = Z + X
-
-    len_Z = len(tokenizer(Z, add_special_tokens=False).input_ids)
-    sentences = _split_sentences(X)
-    tokenized = [tokenizer(s, add_special_tokens=False).input_ids for s in sentences]
-    sent_lens = [len(toks) for toks in tokenized]
-    # prefix sums to locate sentence boundaries
-    prefix = [0]
-    for l in sent_lens[:-1]:
-        prefix.append(prefix[-1] + l)
-
-    dce_values = []
-    for i in range(len(sentences)):
-        for j in range(i+1, len(sentences)):
-            # position of end-of-sentence j in the full sequence
-            pos_j = len_Z + prefix[j] + sent_lens[j] - 1
-            grads = _compute_grads_matrix(full, pos_j, p)
-            # gradient norm of sentence i segment
-            start_i = len_Z + prefix[i]
-            end_i   = start_i + sent_lens[i]
-            g_i = grads[start_i:end_i].norm(p=p).item()
-            dce_values.append(g_i)
-
-    return float(sum(dce_values) / len(dce_values)) if dce_values else 0.0
+    # 3) No marker found: fallback to "last sentence" logic
+    return _extract_last_sentence_fallback(text)

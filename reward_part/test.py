@@ -11,7 +11,7 @@ def call_online_reward_model(**kwargs):
         json_data = {**kwargs}
 
         response = requests.post(
-            "http://0.0.0.0:6009/get_reward2", headers=headers, json=json_data
+            "http://0.0.0.0:6010/get_reward2", headers=headers, json=json_data
         )
         res = response.json()
 
