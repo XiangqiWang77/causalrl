@@ -6,7 +6,10 @@ Export the K easiest & shortest {question, answer} PAIRS from MrLight/bbeh-eval.
 Heuristic "ease" score (lower = simpler/shorter):
     score = 0.7 * len_words(question) + 0.3 * len_words(answer)
 
-Output: a JSON array of objects: [{"question": "...", "answer": "..."}, ...]
+Additionally:
+- Convert alphabetic number words (zero..ten) to digits in both question/answer.
+
+Output: [{"question": "...", "answer": "..."}]
 """
 import argparse, json, re, sys, pathlib
 from typing import List, Set
@@ -18,6 +21,30 @@ except ImportError:
     raise
 
 DATASET_ID = "MrLight/bbeh-eval"  # HF dataset repo id
+
+_NUM_WORDS = {
+    "zero": "0",
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9",
+    "ten": "10",
+}
+
+# precompile word-boundary regex for faster multi-replace
+_NUM_PAT = re.compile(r"\b(" + "|".join(map(re.escape, _NUM_WORDS.keys())) + r")\b", re.IGNORECASE)
+
+def convert_alpha_numbers(s: str) -> str:
+    """Convert alphabetic number words (zero..ten) to digits, case-insensitive, whole-word."""
+    def _sub(m):
+        w = m.group(1).lower()
+        return _NUM_WORDS.get(w, m.group(0))
+    return _NUM_PAT.sub(_sub, s or "")
 
 def norm_task(s: str) -> str:
     s = (s or "").strip().lower()
@@ -51,8 +78,8 @@ def main():
                     help="输出 JSON 文件名（包含 question/answer 对）")
     ap.add_argument("--list-tasks", action="store_true",
                     help="仅列出可用 task 名称后退出")
-    ap.add_argument("--topk", type=int, default=120,
-                    help="输出 QA 对数量（默认 120）")
+    ap.add_argument("--topk", type=int, default=110,
+                    help="输出 QA 对数量（默认 110）")
     ap.add_argument("--wq", type=float, default=0.7,
                     help="问题词数权重（默认 0.7）")
     ap.add_argument("--wa", type=float, default=0.3,
@@ -60,7 +87,7 @@ def main():
     args = ap.parse_args()
 
     # Load dataset (split = train)
-    ds = load_dataset(DATASET_ID, split="train")  # expects fields: 'task', 'question', 'answer'  :contentReference[oaicite:0]{index=0}
+    ds = load_dataset(DATASET_ID, split="train")  # expects fields: 'task', 'question', 'answer'
     all_tasks = sorted(set(ds["task"]))
     if args.list_tasks:
         print("\n# Available tasks ({}):".format(len(all_tasks)))
@@ -76,15 +103,20 @@ def main():
 
     picked_set = set(picked)
 
-    # Collect (score, question, answer)
+    # Collect (score, question, answer) with numeric conversion applied
     scored = []
     for ex in ds:
         if ex.get("task") not in picked_set:
             continue
-        q = (ex.get("question") or "").strip()
-        a = (ex.get("answer") or "").strip()
-        if not q or not a:
+        q_raw = (ex.get("question") or "").strip()
+        a_raw = (ex.get("answer") or "").strip()
+        if not q_raw or not a_raw:
             continue
+
+        # convert alphabetic numbers -> digits
+        q = convert_alpha_numbers(q_raw)
+        a = convert_alpha_numbers(a_raw)
+
         scored.append((ease_score(q, a, args.wq, args.wa), q, a))
 
     if not scored:
@@ -108,7 +140,8 @@ def main():
     out_path.write_text(json.dumps(qa_pairs, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[OK] {len(qa_pairs)} QA pairs -> {out_path.resolve()}")
     print(f"[note] score = {args.wq}*len_words(question) + {args.wa}*len_words(answer)")
-    print("[ref] Dataset card:", "https://huggingface.co/datasets/MrLight/bbeh-eval")  # :contentReference[oaicite:1]{index=1}
+    print("[note] alphabetic numbers (zero..ten) converted to digits in outputs.")
+    print("[ref] Dataset card:", "https://huggingface.co/datasets/MrLight/bbeh-eval")
 
 if __name__ == "__main__":
     main()
