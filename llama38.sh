@@ -29,7 +29,7 @@ nohup python3 -m verl.trainer.main_ppo \
     data.truncation=right \
     data.max_response_length=2048\
     actor_rollout_ref.model.path=$model_path \
-    actor_rollout_ref.actor.optim.lr=5e-6 \
+    actor_rollout_ref.actor.optim.lr=2e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.ppo_mini_batch_size=3\
     actor_rollout_ref.actor.use_dynamic_bsz=True \
@@ -45,7 +45,7 @@ nohup python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.rollout.name=vllm \
     actor_rollout_ref.rollout.gpu_memory_utilization=0.68 \
     actor_rollout_ref.rollout.temperature=1.0 \
-    actor_rollout_ref.rollout.n=2 \
+    actor_rollout_ref.rollout.n=6 \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
     reward_model.reward_api=http://0.0.0.0:6010/get_reward2 \
     trainer.critic_warmup=1 \
