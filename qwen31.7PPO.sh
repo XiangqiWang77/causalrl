@@ -16,7 +16,7 @@ data_dir=./data
 
 model_path=/path/to/qwen3-1.7b
 cur_task=0.09CEPPOBERTQwen31.7
-save_model_checkpoint=/groups/xzhang33/xwang76/train_models/$cur_task
+save_model_checkpoint=/path/to/train_models/$cur_task
 
 
 nohup python3 -m verl.trainer.main_ppo \
