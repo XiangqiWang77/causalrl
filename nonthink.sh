@@ -11,14 +11,13 @@ ray stop
 ray start --head --node-ip-address=0.0.0.0 --port=6378 --dashboard-host=0.0.0.0 --dashboard-port=8265 --ray-debugger-external --num-gpus 3
 
 
-# 数据路径
 data_dir=./data
-# 模型路径
+
 model_path=/users/xwang76/hf_models/qwen3-4b
 cur_task=0823nonthink
 save_model_checkpoint=/users/xwang76/nano_rl/train_rlhf_on_cluster/train_models/$cur_task
 
-echo "在主节点上启动训练..."
+
 nohup python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
     algorithm.kl_ctrl.kl_coef=0.001 \
