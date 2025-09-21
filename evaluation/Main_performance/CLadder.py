@@ -49,13 +49,11 @@ def _iter_json_bytes(b: bytes):
 def main(out_path="cladder_qa.json"):
     records = []
 
-    # 若传入本地 JSON/CSV/JSONL 路径则优先用本地（此处示例仅处理 JSON/JSONL）
     if len(sys.argv) > 1:
         for p in sys.argv[1:]:
             with open(p, "rb") as f:
                 records.extend(list(_iter_json_bytes(f.read())))
     else:
-        # 从官方 GitHub 下载 zip，并优先选 balanced 版本
         resp = requests.get(GITHUB_ZIP, timeout=60)
         resp.raise_for_status()
         with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
@@ -74,11 +72,9 @@ def main(out_path="cladder_qa.json"):
     out = []
     for r in records:
         qa = _row_to_qa(r)
-        # 过滤空/异常
         if qa["question"].strip() and qa["question"].strip() != "Question:" and len(qa["question"]) >= 12:
             out.append(qa)
 
-    # 去重
     seen, dedup = set(), []
     for x in out:
         key = (x["question"], x["answer"])
