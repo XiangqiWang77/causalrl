@@ -13,12 +13,12 @@ from fastapi.middleware.cors import CORSMiddleware
 logger = logging.getLogger("updated_server")
 logging.basicConfig(level=logging.INFO)
 
-# ------------------- 配置 -------------------
+
 CUDA_DEVICES_STR = os.environ.get("CUDA_DEVICES", "cuda:0,cuda:1,cuda:2,cuda:3").strip()
 MAX_BATCH_SIZE   = int(os.environ.get("MAX_BATCH_SIZE", "4"))
 MAX_WAIT_MS      = int(os.environ.get("MAX_WAIT_MS", "8"))
 
-# 显存安全
+
 MAX_TOKENS_PER_BATCH   = int(os.environ.get("MAX_TOKENS_PER_BATCH", "1024"))
 CUDA_FREE_MEM_FRACTION = float(os.environ.get("CUDA_FREE_MEM_FRACTION", "0.85"))
 OOM_BACKOFF_STEPS      = int(os.environ.get("OOM_BACKOFF_STEPS", "4"))
@@ -27,10 +27,10 @@ RESERVED_WATERMARK     = float(os.environ.get("RESERVED_WATERMARK", "0.92"))
 SAFE_MIN_FREE_MB       = int(os.environ.get("SAFE_MIN_FREE_MB", "1000"))  # 1GB
 MAX_MEMORY_FRACTION    = float(os.environ.get("MAX_MEMORY_FRACTION", "0.90"))
 
-# BERTScore 放哪里（默认 CPU，避免压一张卡）
+
 BERTSCORE_DEVICE = os.environ.get("BERTSCORE_DEVICE", "cpu")
 
-# ------------------- 全局状态 -------------------
+
 calc = None
 _bs_scorer = None
 _task_queue: "asyncio.Queue[Tuple[Dict[str, Any], asyncio.Future]]" = None
@@ -47,12 +47,12 @@ def _normalize_devices(devs: str) -> List[str]:
             out.append(f"cuda:{d}")
         else:
             out.append(d)
-    # 过滤掉非 cuda 的项（允许传 cpu 调试）
+
     return out
 
 CUDA_DEVICES = _normalize_devices(CUDA_DEVICES_STR)
 
-# ------------------- 多卡显存工具 -------------------
+
 def _cuda_mem_info(device_str: str):
     import torch
     if not torch.cuda.is_available() or not device_str.startswith("cuda"):
@@ -72,9 +72,6 @@ def _cuda_mem_info_all() -> Dict[str, Tuple[int,int,int,int]]:
     return info
 
 def _has_safe_margin_all() -> bool:
-    """
-    所有 GPU 的 (free * fraction) 都需 >= SAFE_MIN_FREE_MB
-    """
     infos = _cuda_mem_info_all()
     for d, (free_b, _, _, _) in infos.items():
         safe_free_b = int(free_b * CUDA_FREE_MEM_FRACTION)
@@ -90,12 +87,10 @@ def _maybe_empty_cache_all():
         dev = torch.device(d)
         if dev.index is not None:
             torch.cuda.set_device(dev)
-        # 触发 reserved 水位清理
         _, total_b2, reserved_b2, _ = _cuda_mem_info(d)
         if RESERVED_WATERMARK < 1.0 and total_b2 > 0:
             if reserved_b2 / total_b2 > RESERVED_WATERMARK:
                 torch.cuda.empty_cache()
-    # 全局再清一次
     torch.cuda.empty_cache()
 
 """
@@ -105,7 +100,7 @@ import math
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-# ---------- global init (一次) ----------
+
 _MODEL_NAME = "roberta-large-mnli"   # 或 "facebook/bart-large-mnli"
 _DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -119,7 +114,6 @@ def _resolve_label_ids(model) -> Tuple[int, int, int]:
     if getattr(model.config, "label2id", None):
         l2i = {k.lower(): int(v) for k, v in model.config.label2id.items()}
     else:
-        # 有些模型没有 label2id，用 id2label 反推
         if getattr(model.config, "id2label", None):
             l2i = {v.lower(): int(k) for k, v in model.config.id2label.items()}
 
@@ -133,7 +127,6 @@ def _resolve_label_ids(model) -> Tuple[int, int, int]:
     con = pick("contradiction", "contradicts")
     neu = pick("neutral")
 
-    # 常见 roberta 风格：0:C,1:N,2:E
     if any(v is None for v in (ent, con, neu)):
         ent, con, neu = 2, 0, 1
     return ent, con, neu
@@ -158,7 +151,6 @@ def _chunked(iterable, size: int):
         yield iterable[i:i+size]
 
 def _tokenize_pairs(premises: List[str], hyps: List[str], max_length: int = 512):
-    # tokenizer 默认会返回 int64（long），但我们仍然在后续强制 cast 一次以绝对安全
     return _TOKENIZER(
         premises,
         hyps,
@@ -168,7 +160,7 @@ def _tokenize_pairs(premises: List[str], hyps: List[str], max_length: int = 512)
         return_tensors="pt"
     )
 
-# 同步推理（可放线程池），分块 + GPU/CPU 回退 + dtype/设备加固
+
 def _nli_entail_probs_sync(
     premises: List[str],
     hyps: List[str],
@@ -186,7 +178,6 @@ def _nli_entail_probs_sync(
             try:
                 logits = _MODEL(**batch).logits  # [B,3]
             except RuntimeError as e:
-                # 若是 embedding/indices 或 CUDA 相关错误，回退到 CPU 再试一次
                 msg = str(e).lower()
                 needs_cpu_fallback = (
                     "embedding" in msg and "indices" in msg
@@ -196,7 +187,6 @@ def _nli_entail_probs_sync(
                     _MODEL.to(dev_cpu)
                     batch_cpu = _ensure_long_and_device(batch, dev_cpu)
                     logits = _MODEL(**batch_cpu).logits
-                    # 用完再把模型挪回原设备，避免后续仍在 CPU（如需持久 CPU，可去掉这行）
                     _MODEL.to(_DEVICE)
                 else:
                     raise
@@ -216,12 +206,9 @@ async def _compute_bertscore_batch(
     
     if not Ys or not refs:
         raise ValueError("Ys and refs cannot be empty.")
-
-    # 过滤 None/空白，避免 tokenizer 异常；保持对齐
     Ys_clean = [y if (isinstance(y, str) and y.strip()) else "" for y in Ys]
     refs_clean = [r if (isinstance(r, str) and r.strip()) else "" for r in refs]
 
-    # 展开所有 (Y, ref) 组合
     premises, hyps = [], []
     for y in Ys_clean:
         premises.extend([y] * len(refs_clean))
@@ -230,7 +217,6 @@ async def _compute_bertscore_batch(
     n_y, n_r = len(Ys_clean), len(refs_clean)
     total_pairs = n_y * n_r
 
-    # 扔到线程池做同步推理
     loop = asyncio.get_running_loop()
     entail_flat: torch.Tensor = await loop.run_in_executor(
         None,
@@ -242,24 +228,21 @@ async def _compute_bertscore_batch(
         _DEVICE,
     )
 
-    # shape/长度防御性检查
     if not isinstance(entail_flat, torch.Tensor):
         entail_flat = torch.tensor(entail_flat, dtype=torch.float32)
     entail_flat = entail_flat.flatten().contiguous().cpu()
 
     if entail_flat.numel() != total_pairs:
-        # 回退：不一致时，裁剪或补零到目标长度，避免 view 报错
         if entail_flat.numel() > total_pairs:
             entail_flat = entail_flat[:total_pairs]
         else:
             pad = torch.zeros(total_pairs - entail_flat.numel(), dtype=entail_flat.dtype)
             entail_flat = torch.cat([entail_flat, pad], dim=0)
 
-    # 还原为 [len(Ys), len(refs)]，取每个 Y 的最大蕴含概率
     entail_mat = entail_flat.view(n_y, n_r)          # [N_y, N_r]
     max_entail = entail_mat.max(dim=1).values        # [N_y], 0~1
 
-    # 阈值化成 0.0 / 1.0（float）
+
     return (max_entail >= threshold).to(dtype=torch.float32).tolist()
 """
 
@@ -277,7 +260,7 @@ async def _compute_bertscore_batch(Ys: List[str], refs: List[str]) -> List[float
     return [PREC_W * P[i].item() + (1 - PREC_W) * F1[i].item() for i in range(len(Ys))]
 
 
-# ------------------- Minkowski 聚合 -------------------
+# ------------------- Minkowski-------------------
 import math
 def minkowski_reward(bertscore, s_ZX, s_XY, s_ZY, w1, w2, w3, w4, p, eps=1e-12):
     s_raw = [bertscore, s_ZX, s_XY, s_ZY]
@@ -320,7 +303,7 @@ def minkowski_reward(bertscore, s_ZX, s_XY, s_ZY, w1, w2, w3, w4, p, eps=1e-12):
     if acc <= 0: return 0.0
     return min(1.0, max(0.0, math.exp((1.0/p) * math.log(acc))))
 
-# ------------------- 估计 token -------------------
+# ------------------- token -------------------
 def _estimate_tokens_single(tok, Z: str, X: str, Y: str,
                             max_z: int | None, max_x: int | None, max_y: int | None) -> int:
     z = tok(Z, add_special_tokens=False, return_tensors="pt").input_ids
@@ -331,37 +314,31 @@ def _estimate_tokens_single(tok, Z: str, X: str, Y: str,
     if max_y: y = y[:, -max_y:]
     return int(z.size(1) + 1 + x.size(1) + 1 + y.size(1))
 
-# ------------------- 加载（分片权重） -------------------
+
 def _build_max_memory_map():
     import torch
     max_mem = {}
     for d in CUDA_DEVICES:
-        if not d.startswith("cuda"):  # 跳过 CPU / 其他
+        if not d.startswith("cuda"):  
             continue
         idx = torch.device(d).index
         if idx is None:
             continue
         props = torch.cuda.get_device_properties(idx)
-        # GiB 近似（留出 10%~15%）
         gb = int(props.total_memory / (1024**3) * MAX_MEMORY_FRACTION)
         max_mem[idx] = f"{gb}GiB"
     return max_mem
 
 def _load_rms_sharded(model_path: str):
-    """
-    尝试以分片方式构造 RMSNormalizedSignalCalculator：
-    1) 首选：构造时传入 hf_load_kwargs（如果类支持）
-    2) 兜底：先常规构造，再抓取其底层 HF 模型，用 accelerate 分发后回注
-    """
     import torch
     from distri_signal import RMSNormalizedSignalCalculator
     dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
 
-    # 设备映射：多卡则 balanced；单卡则映射到唯一设备
+    
     device_map = "balanced" if len(CUDA_DEVICES) > 1 and torch.cuda.is_available() else None
     max_memory = _build_max_memory_map() if device_map else None
 
-    # --- 优先尝试：类自身支持透传 HF 加载参数 ---
+   
     try:
         calc = RMSNormalizedSignalCalculator(
             model_path,
@@ -378,7 +355,7 @@ def _load_rms_sharded(model_path: str):
     except TypeError:
         logger.info("[lifespan] RMS does not accept hf_load_kwargs; trying fallback dispatch…")
 
-    # --- 兜底：抓取底层模型并分发 ---
+    
     calc = RMSNormalizedSignalCalculator(
         model_path,
         device="cuda:0" if torch.cuda.is_available() else "cpu",  # 临时放 0 卡，稍后分发
@@ -386,7 +363,6 @@ def _load_rms_sharded(model_path: str):
     )
     try:
         from accelerate import load_checkpoint_and_dispatch
-        # 获取底层 HF 模型与模型名/权重路径（按你的实现适配属性名）
         base_model = getattr(calc, "model", None) or getattr(calc, "_model", None)
         base_name_or_path = getattr(base_model, "name_or_path", model_path)
 
@@ -406,7 +382,6 @@ def _load_rms_sharded(model_path: str):
             no_split_module_classes=getattr(base_model, "_no_split_modules", None)
         )
 
-        # 注回 calc
         if hasattr(calc, "model"):
             calc.model = sharded_model
         elif hasattr(calc, "_model"):
@@ -416,7 +391,7 @@ def _load_rms_sharded(model_path: str):
         logger.warning(f"[lifespan] Fallback shard failed; using single GPU model. err={e}")
     return calc
 
-# ------------------- FastAPI 生命周期 -------------------
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global calc, _bs_scorer, _task_queue, _batcher_task
@@ -424,10 +399,10 @@ async def lifespan(app: FastAPI):
     import torch
     import os as _os
 
-    # 限定可见设备（建议同时设置系统 CUDA_VISIBLE_DEVICES，但这里保险再筛一次）
+    
     logger.info(f"[lifespan] Visible devices: {CUDA_DEVICES}")
 
-    # 加载分片 LLM（跨多卡）
+   
     logger.info("[lifespan] loading RMSNormalizedSignalCalculator (sharded)…")
     calc = _load_rms_sharded("/groups/xzhang33/xwang76/llama-3-8B")
 
@@ -476,15 +451,13 @@ app.add_middleware(
     allow_methods=["*"], allow_headers=["*"],
 )
 
-# ------------------- 批处理主体 -------------------
+
 async def _safe_compute_batch(Zs: List[str], Xs: List[str], Ys: List[str]) -> Tuple[List[float], List[float], List[float]]:
-    """
-    分片模型在多 GPU 上执行；OOM 回退基于“所有 GPU 的最小安全余量”
-    """
+    
     import torch
     global _global_batch_idx
 
-    # 估 token 做软约束分块
+    
     tok = getattr(calc, "tokenizer", None)
     max_z = getattr(calc, "max_z", None)
     max_x = getattr(calc, "max_x", None)
@@ -519,11 +492,11 @@ async def _safe_compute_batch(Zs: List[str], Xs: List[str], Ys: List[str]) -> Tu
         tries = 0
         while sub:
             try:
-                # 多卡安全余量检查（最紧张的卡为准）
+                
                 if not _has_safe_margin_all() and len(sub) > 1:
                     sub = sub[: max(1, len(sub)//2)]
 
-                # 真正执行（分片模型内部会在多卡上各自计算）
+               
                 Zb = [Zs[i] for i in sub]
                 Xb = [Xs[i] for i in sub]
                 Yb = [Ys[i] for i in sub]
@@ -535,7 +508,7 @@ async def _safe_compute_batch(Zs: List[str], Xs: List[str], Ys: List[str]) -> Tu
 
                 del Zb, Xb, Yb, sZX, sZY, sXY
 
-                # 周期性 / 水位清理（全卡）
+                
                 if RESERVE_WATERMARK := RESERVED_WATERMARK:
                     _maybe_empty_cache_all()
                 if CLEAR_CACHE_EVERY > 0:
@@ -563,7 +536,7 @@ async def _safe_compute_batch(Zs: List[str], Xs: List[str], Ys: List[str]) -> Tu
     _global_batch_idx += 1
     return out_ZX, out_ZY, out_XY
 
-# ------------------- 批处理循环 -------------------
+
 async def _batcher_loop():
     from signal_utils import extract_XY
     import time
