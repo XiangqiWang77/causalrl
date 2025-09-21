@@ -35,7 +35,6 @@ def extract_user_query_deepseek(text):
 
 
 def extract_boxed(text):
-    """使用计数方法提取\boxed{}中的内容，处理任意嵌套的大括号"""
     if not isinstance(text, str):
         return None
 
@@ -43,12 +42,10 @@ def extract_boxed(text):
     if boxed_start == -1:
         return None
 
-    # 跳过'\boxed{'
     start_pos = boxed_start + 7
     brace_count = 1
     end_pos = start_pos
 
-    # 通过计数大括号来找到匹配的结束大括号
     while end_pos < len(text) and brace_count > 0:
         if text[end_pos] == "{":
             brace_count += 1
@@ -57,7 +54,6 @@ def extract_boxed(text):
         end_pos += 1
 
     if brace_count == 0:
-        # 减去1是因为我们要排除最后的大括号
         return text[start_pos : end_pos - 1]
 
     return None
@@ -93,7 +89,6 @@ def sub_answer_by_math(x: List[str] | str | None):
 
 
 def get_model_gen_result(x: str):
-    # 用于提取模型输出的最终结果
     if not isinstance(x, str):
         return []
     else:
@@ -112,20 +107,16 @@ def get_model_gen_result(x: str):
 
 
 def get_ground_truth(x: str):
-    # 处理ground truth的结果
     res = sub_answer_by_math(x)
     res = list(set(res))
     return res
 
 
 def calc_accuracy4math(ground_truth: str, response: str) -> float:
-    """计算数学公式的准确率"""
-    # 提取模型输出的最终结果
+
     model_gen_result = get_model_gen_result(response)
-    # 提取标准答案的最终结果
     ground_truth_result = get_ground_truth(ground_truth)
 
-    # 计算准确率
     accuracy = verify(model_gen_result, ground_truth_result)
     accuracy = accuracy * 1.0
     return accuracy
@@ -176,7 +167,6 @@ def get_reward_score_api_cloud(user_prompt: str, response_str):
 
 
 def calc_cloud_score(query: str, response: str) -> float:
-    """使用自定义的reward接口进行训练"""
     model_response_answer = extract_answer_deepseek(response)
     query = extract_user_query_deepseek(query)
 
