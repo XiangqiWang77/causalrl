@@ -14,9 +14,9 @@ ray start --head --node-ip-address=0.0.0.0 --port=6378 --dashboard-host=0.0.0.0 
 
 data_dir=./data
 
-model_path=/groups/xzhang33/xwang76/qwen3-4b
+model_path=/path/to/xwang76/qwen3-4b
 cur_task=GRPOOTHERQWEN34B
-save_model_checkpoint=/groups/xzhang33/xwang76/train_models/$cur_task
+save_model_checkpoint=/path/to/xwang76/train_models/$cur_task
 
 
 nohup python3 -m verl.trainer.main_ppo \
