@@ -50,7 +50,7 @@ async def lifespan(app: FastAPI):
         logger.warning(f"[lifespan] set_device warn: {_e}")
 
     from modi_signal import RMSNormalizedSignalCalculator
-    calc = RMSNormalizedSignalCalculator("/groups/xzhang33/xwang76/qwen3-4b", device=CUDA_DEVICE)
+    calc = RMSNormalizedSignalCalculator("/path/to/qwen3-4b", device=CUDA_DEVICE)
 
     try:
         from bert_score import BERTScorer
