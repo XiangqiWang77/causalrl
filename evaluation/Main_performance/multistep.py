@@ -72,18 +72,12 @@ def main():
     ap = argparse.ArgumentParser(
         description="Export K easiest & shortest QA pairs from MrLight/bbeh-eval."
     )
-    ap.add_argument("--task", type=str, default="multistep_arithmetic",
-                    help="可模糊匹配的任务名，支持逗号分隔多个（示例：'multistep, arithmetic'）")
-    ap.add_argument("--out", type=str, default="bbeh_easy_qa.json",
-                    help="输出 JSON 文件名（包含 question/answer 对）")
-    ap.add_argument("--list-tasks", action="store_true",
-                    help="仅列出可用 task 名称后退出")
-    ap.add_argument("--topk", type=int, default=110,
-                    help="输出 QA 对数量（默认 110）")
-    ap.add_argument("--wq", type=float, default=0.7,
-                    help="问题词数权重（默认 0.7）")
-    ap.add_argument("--wa", type=float, default=0.3,
-                    help="答案词数权重（默认 0.3）")
+    ap.add_argument("--task", type=str, default="multistep_arithmetic")
+    ap.add_argument("--out", type=str, default="bbeh_easy_qa.json")
+    ap.add_argument("--list-tasks", action="store_true")
+    ap.add_argument("--topk", type=int, default=110)
+    ap.add_argument("--wq", type=float, default=0.7)
+    ap.add_argument("--wa", type=float, default=0.3)
     args = ap.parse_args()
 
     # Load dataset (split = train)
