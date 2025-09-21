@@ -14,12 +14,11 @@ from fastapi.middleware.cors import CORSMiddleware
 logger = logging.getLogger("hacking_server")
 logging.basicConfig(level=logging.INFO)
 
-# ------------------- 配置 -------------------
 CUDA_DEVICE = os.environ.get("CUDA_DEVICE", "cuda:0")
 MAX_BATCH_SIZE = int(os.environ.get("MAX_BATCH_SIZE", "4"))
 MAX_WAIT_MS   = int(os.environ.get("MAX_WAIT_MS", "8"))
 
-# --- 显存安全相关（可用环境变量覆盖） ---
+
 MAX_TOKENS_PER_BATCH   = int(os.environ.get("MAX_TOKENS_PER_BATCH", "1024"))
 CUDA_FREE_MEM_FRACTION = float(os.environ.get("CUDA_FREE_MEM_FRACTION", "0.85"))
 OOM_BACKOFF_STEPS      = int(os.environ.get("OOM_BACKOFF_STEPS", "4"))
@@ -27,38 +26,31 @@ CLEAR_CACHE_EVERY      = int(os.environ.get("CLEAR_CACHE_EVERY", "5"))
 RESERVED_WATERMARK     = float(os.environ.get("RESERVED_WATERMARK", "0.92"))
 SAFE_MIN_FREE_MB       = int(os.environ.get("SAFE_MIN_FREE_MB", "1000"))  # 1.2GB 安全余量
 
-# ------------------- 全局状态 -------------------
+
 calc = None
 judge = None
 _task_queue: "asyncio.Queue[Tuple[Dict[str, Any], asyncio.Future]]" = None
 _batcher_task: asyncio.Task = None
-_global_batch_idx: int = 0  # 用于周期性清理
+_global_batch_idx: int = 0  
 
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    启动时只做一次：加载 Qwen(calc)、BERTScorer、创建队列与批处理后台协程。
-    """
     global calc, judge, _task_queue, _batcher_task, _bs_scorer
 
-    # 必须先 import，再用 os.getpid()
     import os, torch
     logger.info(f"[lifespan] PID={os.getpid()} starting… loading model to {CUDA_DEVICE}")
 
-    # 固定当前 CUDA 设备
     try:
         if torch.cuda.is_available():
             torch.cuda.set_device(torch.device(CUDA_DEVICE))
     except Exception as _e:
         logger.warning(f"[lifespan] set_device warn: {_e}")
 
-    # 只加载一份 Qwen：由 calc 持有
     from hack_signal import RMSNormalizedSignalCalculator
     calc = RMSNormalizedSignalCalculator("/users/xwang76/hf_models/qwen3-4b", device=CUDA_DEVICE)
 
-    # 启动期一次性加载并缓存 BERTScorer（后续复用，不再重复加载）
     try:
         from bert_score import BERTScorer
         _bs_scorer = BERTScorer(
@@ -72,7 +64,6 @@ async def lifespan(app: FastAPI):
         _bs_scorer = None
         logger.warning(f"[lifespan] BERTScorer init failed: {e}")
 
-    # 队列与批处理后台协程
     _task_queue = asyncio.Queue()
     _batcher_task = asyncio.create_task(_batcher_loop())
     logger.info("[lifespan] model loaded, queue started")
@@ -215,7 +206,6 @@ def minkowski_reward(bertscore, s_ZX, s_XY, s_ZY, w1, w2, w3, w4, p, eps=1e-12):
     return min(1.0, max(0.0, total))
 
 
-# ------------------- 显存安全辅助 -------------------
 def _cuda_mem_info(device_str: str):
     import torch
     if not torch.cuda.is_available():
@@ -240,20 +230,15 @@ def _estimate_tokens_single(tok, Z: str, X: str, Y: str,
     return int(z.size(1) + 1 + x.size(1) + 1 + y.size(1))
 
 async def _safe_compute_batch(Zs: List[str], Xs: List[str], Ys: List[str]) -> Tuple[List[float], List[float], List[float]]:
-    """
-    不改 RMS：在 server 侧做切片 + 显存水位检查 + OOM 回退 + 周期清理。
-    """
     import torch
     global _global_batch_idx
 
-    # 1) 预分块：不超过 MAX_TOKENS_PER_BATCH（启发式柔约束）
     tok = getattr(calc, "tokenizer", None)
     max_z = getattr(calc, "max_z", None)
     max_x = getattr(calc, "max_x", None)
     max_y = getattr(calc, "max_y", None)
 
     if tok is None:
-        # 若拿不到 tokenizer，就退化为样本数切片
         est_tokens = [len(Zs[i]) + len(Xs[i]) + len(Ys[i]) for i in range(len(Zs))]
         token_budget = MAX_TOKENS_PER_BATCH * 3  # 保守
     else:
@@ -277,51 +262,42 @@ async def _safe_compute_batch(Zs: List[str], Xs: List[str], Ys: List[str]) -> Tu
     out_ZY = [None] * len(Zs)
     out_XY = [None] * len(Zs)
 
-    # 2) 针对每个 chunk：显存水位检查 + OOM 回退（二分）
     for local_chunk_id, ch in enumerate(chunks):
         sub = ch[:]
         tries = 0
         while sub:
             try:
                 free_b, total_b, reserved_b, alloc_b = _cuda_mem_info(CUDA_DEVICE)
-                # 安全余量判断
                 safe_free_b = int(free_b * CUDA_FREE_MEM_FRACTION)
                 if (safe_free_b < SAFE_MIN_FREE_MB * 1024 * 1024) and len(sub) > 1:
-                    # 主动先减半，降低 OOM 概率
                     sub = sub[: max(1, len(sub)//2)]
 
-                # 真正执行
                 Zb = [Zs[i] for i in sub]
                 Xb = [Xs[i] for i in sub]
                 Yb = [Ys[i] for i in sub]
 
                 sZX, sZY, sXY = calc.compute_batch_naive(Zb, Xb, Yb)
 
-                # 回填
                 for k, i in enumerate(sub):
                     out_ZX[i] = float(sZX[k])
                     out_ZY[i] = float(sZY[k])
                     out_XY[i] = float(sXY[k])
 
-                # 释放中间强引用，尽快让显存/缓存回收
                 del Zb, Xb, Yb, sZX, sZY, sXY
                 torch.cuda.synchronize()
 
-                # 按需清理：水位高/周期性
                 if torch.cuda.is_available():
                     _, total_b2, reserved_b2, _ = _cuda_mem_info(CUDA_DEVICE)
                     if RESERVED_WATERMARK < 1.0 and total_b2 > 0:
                         if reserved_b2 / total_b2 > RESERVED_WATERMARK:
                             torch.cuda.empty_cache()
                     if CLEAR_CACHE_EVERY > 0:
-                        # 用全局批计数 + 本地 chunk id 组合决定是否清空
                         if ((_global_batch_idx + local_chunk_id) % CLEAR_CACHE_EVERY) == 0:
                             torch.cuda.empty_cache()
 
-                break  # 成功，退出 while
+                break  
 
             except RuntimeError as re:
-                # 捕获可能的 CUDA OOM
                 msg = str(re)
                 is_oom = ("CUDA out of memory" in msg) or ("CUDA error: out of memory" in msg)
                 if not is_oom:
@@ -331,7 +307,6 @@ async def _safe_compute_batch(Zs: List[str], Xs: List[str], Ys: List[str]) -> Tu
                 torch.cuda.empty_cache()
                 logger.warning(f"[compute_batch] OOM on sub-batch size={len(sub)}; try={tries}")
                 if len(sub) == 1 or tries > OOM_BACKOFF_STEPS:
-                    # 单条仍 OOM，直接抛
                     raise
                 sub = sub[: max(1, len(sub)//2)]
             except Exception:
@@ -340,12 +315,8 @@ async def _safe_compute_batch(Zs: List[str], Xs: List[str], Ys: List[str]) -> Tu
     _global_batch_idx += 1
     return out_ZX, out_ZY, out_XY
 
-# ------------------- 批处理核心 -------------------
+
 async def _batcher_loop():
-    """
-    单消费者：不断从队列取任务，按 MAX_WAIT_MS 或 MAX_BATCH_SIZE 触发一次 GPU 批前向。
-    只在一张 GPU 上、只加载一次模型。包含：显存安全/自清理/OOM 回退。
-    """
     from signal_utils import extract_XY
     import time
 
@@ -365,7 +336,6 @@ async def _batcher_loop():
                 except asyncio.TimeoutError:
                     break
 
-            # 组装批次输入
             Zs, Xs, Ys, gts, resps= [], [], [], [],[]
             futs = []
             for payload, fut in batch:
@@ -377,15 +347,13 @@ async def _batcher_loop():
                 #resps.append(resp[:512])
                 futs.append(fut)
 
-            # CPU 侧跑 judge（若它很重，建议另做 batched 版本）
             bertscores = await _compute_bertscore_batch(Ys, gts)
 
 
-            # === 显存安全的批前向 ===
             s_ZX_list, s_ZY_list, s_XY_list = await _safe_compute_batch(Zs, Xs, Ys)
             #factual_list = await calc.factual_correctness_batch(Ys, gts)
 
-            # 聚合 + 回填
+
             p, w1, w2, w3, w4 = 1, 6/10, 4/30, 4/30, 4/30
             for i, fut in enumerate(futs):
                 bertscore = float(bertscores[i])
@@ -419,10 +387,7 @@ async def _batcher_loop():
 
 @app.post("/get_reward2")
 async def get_reward2(request: Request):
-    """
-    高并发入口：把请求丢进队列，等待 batch 结果。
-    GPU 只有一份模型、单消费者一次性合批前向（显存安全）。
-    """
+
     json_data = await request.json()
     fut: "asyncio.Future[Dict[str, Any]]" = asyncio.get_running_loop().create_future()
     await _task_queue.put((json_data, fut))
