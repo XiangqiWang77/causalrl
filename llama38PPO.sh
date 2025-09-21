@@ -14,9 +14,9 @@ ray start --head --node-ip-address=0.0.0.0 --port=6378 --dashboard-host=0.0.0.0 
 
 data_dir=./data
 
-model_path=/groups/xzhang33/xwang76/llama-3-8B
+model_path=/path/to/llama-3-8B
 cur_task=0.09CEPOPPOLLAMA
-save_model_checkpoint=/groups/xzhang33/xwang76/train_models/$cur_task
+save_model_checkpoint=/path/to/train_models/$cur_task
 
 
 nohup python3 -m verl.trainer.main_ppo \
