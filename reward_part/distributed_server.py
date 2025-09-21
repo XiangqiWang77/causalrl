@@ -240,7 +240,7 @@ async def lifespan(app: FastAPI):
     logger.info(f"[lifespan] Visible devices: {CUDA_DEVICES}")
 
     logger.info("[lifespan] loading RMSNormalizedSignalCalculator (sharded)…")
-    calc = _load_rms_sharded("/groups/xzhang33/xwang76/llama-3-8B")
+    calc = _load_rms_sharded("/path/to/llama-3-8B")
 
     # BERTScorer
     try:
