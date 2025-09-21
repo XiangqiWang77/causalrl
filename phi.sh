@@ -11,14 +11,14 @@ ray stop
 ray start --head --node-ip-address=0.0.0.0 --port=6378 --dashboard-host=0.0.0.0 --dashboard-port=8265 --ray-debugger-external --num-gpus 4
 
 
-# 数据路径
+
 data_dir=./data
-# 模型路径
+
 model_path=/groups/xzhang33/xwang76/phi-3.5-mini-instruct
 cur_task=GRPO-Phi-3.5
 save_model_checkpoint=/groups/xzhang33/xwang76/train_models/$cur_task
 
-echo "在主节点上启动训练..."
+
 nohup python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
     algorithm.kl_ctrl.kl_coef=0.001 \
