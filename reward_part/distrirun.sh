@@ -18,7 +18,7 @@ export CLEAR_CACHE_EVERY=5
 export RESERVED_WATERMARK=0.92
 
 
-LOG_DIR="/users/xwang76/nano_rl/reward_part"
+LOG_DIR="/path/to/reward_part"
 mkdir -p "$LOG_DIR"
 LOG_NAME="llama8B_$(date +%Y%m%d_%H%M%S).log"
 
