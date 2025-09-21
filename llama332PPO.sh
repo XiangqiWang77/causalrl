@@ -11,9 +11,8 @@ ray stop
 ray start --head --node-ip-address=0.0.0.0 --port=6378 --dashboard-host=0.0.0.0 --dashboard-port=8265 --ray-debugger-external --num-gpus 4
 
 
-# 数据路径
 data_dir=./data
-# 模型路径
+
 model_path=/groups/xzhang33/xwang76/llama-3.2-3B
 cur_task=323BERTPOPPOLLAMA
 save_model_checkpoint=/groups/xzhang33/xwang76/train_models/$cur_task
