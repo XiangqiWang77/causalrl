@@ -19,7 +19,7 @@ model_path=/xxxxx/weights/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B
 cur_task=verl_custom_test
 save_model_checkpoint=/xxx/train_rlhf_on_cluster/train_models/$cur_task
 
-echo "在主节点上启动训练..."
+echo "Launching"
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
     data.train_files=$data_dir/train.parquet \
