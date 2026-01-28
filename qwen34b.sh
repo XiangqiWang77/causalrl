@@ -6,7 +6,7 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3
 set -x
 
 # export RAY_DEBUG=1
-export WANDB_API_KEY=3f95fb3793cb54b9d6431d66d888927fb8b6d782
+export WANDB_API_KEY=XXX
 ray stop
 ray start --head --node-ip-address=0.0.0.0 --port=6378 --dashboard-host=0.0.0.0 --dashboard-port=8265 --ray-debugger-external --num-gpus 4
 
