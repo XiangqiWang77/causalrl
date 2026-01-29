@@ -1,6 +1,4 @@
-Here is the Markdown code for the **CausalRL** repository, structured based on the technical details and implementation logic described in the provided paper.
 
-```markdown
 # CausalRL: Causal-Enhanced Policy Optimization (CE-PO)
 
 This repository contains the official implementation of **Causal-Enhanced Policy Optimization (CE-PO)**. 
@@ -24,7 +22,6 @@ CausalRL/
 ├── data/               # Academic datasets (BBEH, CaseHOLD, etc.)
 ├── checkpoints/        # Saved models and reward checkpoints
 └── logs/               # Training logs
-
 ```
 
 ---
