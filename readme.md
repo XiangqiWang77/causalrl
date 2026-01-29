@@ -64,7 +64,7 @@ bash trainer/llama38.sh
 
 ---
 
-## 🚀 Parallel Computing Implementation
+## Parallel Computing Implementation
 
 A critical implementation detail of CausalRL is the handling of computational overhead. Calculating Jacobian matrices for every token generation is computationally intensive.
 
@@ -78,54 +78,41 @@ To address this, this implementation modifies the base **Verl** framework to uti
 
 ---
 
-## 📚 Dataset Sources
+## Dataset Sources
 
 The repository includes support for the following academic datasets used in the paper's experiments to evaluate reasoning faithfulness and robustness.
 
 Training & Validation Sets 
 
-* 
-**BBEHCausal:** The causal reasoning split from the BIG-Bench Extra Hard dataset.
+* **BBEHCausal:** The causal reasoning split from the BIG-Bench Extra Hard dataset.
 
 
-* 
-**CaseHOLD:** Multiple-choice legal holdings requiring context from case citations.
+* **CaseHOLD:** Multiple-choice legal holdings requiring context from case citations.
 
 
-* 
-**MATHHARD:** A subset of the MATH dataset focusing on multi-step reasoning (Level 5).
+* **MATHHARD:** A subset of the MATH dataset focusing on multi-step reasoning (Level 5).
 
 
-* 
-**IfQA:** Open-domain QA requiring hypothetical reasoning under counterfactual presuppositions.
+* **IfQA:** Open-domain QA requiring hypothetical reasoning under counterfactual presuppositions.
 
 
 
 Testing & OOD (Out-of-Distribution) Sets 
 
-* 
-**BBEHMATH:** Challenging multistep arithmetic tasks.
+* **BBEHMATH:** Challenging multistep arithmetic tasks.
 
 
-* 
-**CLadder:** A benchmark for association, intervention, and counterfactual queries.
+* **CLadder:** A benchmark for association, intervention, and counterfactual queries.
 
 
-* 
-**LegalBench:** Case-understanding split for analyzing legal reasoning.
+* **LegalBench:** Case-understanding split for analyzing legal reasoning.
 
 
-* 
-**LogiQA:** Deductive logical reasoning from officer entrance exams.
+* **LogiQA:** Deductive logical reasoning from officer entrance exams.
 
 
-* 
-**TruthfulQA / CodeMMLU / SuperGPQA:** Used for evaluating generalization and robustness.
+* **TruthfulQA / CodeMMLU / SuperGPQA:** Used for evaluating generalization and robustness.
 
 
-
-```
-
-```
 
 ```
