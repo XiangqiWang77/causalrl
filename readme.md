@@ -72,13 +72,13 @@ A critical implementation detail of CausalRL is the handling of computational ov
 To address this, this implementation modifies the base **Verl** framework to utilize a **separate thread for reward calculation**.
 
 * **Main Thread:** Handles the policy optimization (actor/critic updates).
-* **Reward Thread:** Asynchronously computes the Jacobian-based causal influence scores (, ) and performs the spectral energy normalization.
+* **Reward Thread:** Asynchronously computes the Jacobian-based causal influence scores, and performs the spectral energy normalization.
 
 
 
 ---
 
-## Dataset Sources
+## Dataset Sources (Please refer to the data folder for download)
 
 The repository includes support for the following academic datasets used in the paper's experiments to evaluate reasoning faithfulness and robustness.
 
@@ -114,5 +114,3 @@ Testing & OOD (Out-of-Distribution) Sets
 * **TruthfulQA / CodeMMLU / SuperGPQA:** Used for evaluating generalization and robustness.
 
 
-
-```
