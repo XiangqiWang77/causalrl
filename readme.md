@@ -26,12 +26,19 @@ Refer to base**.md
 Project Structure
 
 CausalRL/
+
 ├── reward_part/      # reward model training
+
 │   └── run.sh
+
 ├── trainer/          # policy optimization
+
 │   └── llama38.sh
+
 ├── data/
+
 ├── checkpoints/
+
 └── logs/
 
 
