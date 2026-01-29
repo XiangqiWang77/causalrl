@@ -3,13 +3,13 @@
 
 This repository contains the official implementation of **Causal-Enhanced Policy Optimization (CE-PO)**. 
 
-CE-PO is a model-agnostic reward fusion framework designed to mitigate "shortcut learning" in Large Language Models (LLMs). It augments standard policy optimization (PPO/GRPO) by combining task accuracy rewards with **Jacobian-based causal coherence signals**. [cite_start]This ensures that the model's reasoning pathway ($Z \rightarrow X \rightarrow Y$) is not only accurate but faithful
+CE-PO is a model-agnostic reward fusion framework designed to mitigate "shortcut learning" in Large Language Models (LLMs). It augments standard policy optimization (PPO/GRPO) by combining task accuracy rewards with **Jacobian-based causal coherence signals**. This ensures that the model's reasoning pathway ($Z \rightarrow X \rightarrow Y$) is not only accurate but faithful
 
 ---
 
 ## 📂 Project Structure
 
-[cite_start]The project is organized to separate the causal reward calculation from the policy optimization loop, leveraging the **Verl** framework[cite: 356].
+The project is organized to separate the causal reward calculation from the policy optimization loop.
 
 ```text
 CausalRL/
@@ -17,10 +17,10 @@ CausalRL/
 │   ├── run.sh          # Script to generate/calculate causal signals
 │   └── ...             # Logic for counterfactual hardening & spectral normalization
 ├── trainer/            # Policy Optimization (Verl-based)
-│   ├── llama38.sh      # Main training script (e.g., Llama-3-8B)
 │   └── ...             # PPO/GRPO implementation with Minkowski combiner
 ├── data/               # Academic datasets (BBEH, CaseHOLD, etc.)
 ├── checkpoints/        # Saved models and reward checkpoints
+├── llama38.sh      # Main training script (e.g., Llama-3-8B)
 └── logs/               # Training logs
 ```
 
@@ -31,6 +31,10 @@ CausalRL/
 ### Prerequisites
 
 The code relies on the **Verl** framework for efficient RLHF training. Ensure your environment is set up with Python 3.11+.
+
+### Installation
+
+You may refer to base01env.md, base02usage.md to install the Verl training environment.
 
 ### 1. Activate Jacobian Reward Calculation
 
@@ -50,7 +54,7 @@ Once the reward signals are available, run the training script. The trainer uses
 
 ```bash
 cd ..
-bash trainer/llama38.sh
+bash llama38.sh
 
 ```
 
@@ -68,8 +72,7 @@ A critical implementation detail of CausalRL is the handling of computational ov
 To address this, this implementation modifies the base **Verl** framework to utilize a **separate thread for reward calculation**.
 
 * **Main Thread:** Handles the policy optimization (actor/critic updates).
-* 
-**Reward Thread:** Asynchronously computes the Jacobian-based causal influence scores (, ) and performs the spectral energy normalization.
+* **Reward Thread:** Asynchronously computes the Jacobian-based causal influence scores (, ) and performs the spectral energy normalization.
 
 
 
