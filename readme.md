@@ -27,13 +27,11 @@ Project Structure
 
 CausalRL/
 
-├── reward_part/      # reward model training
+├── reward_part/      # reward activation
 
 │   └── run.sh
 
-├── trainer/          # policy optimization
-
-│   └── llama38.sh
+├── trainer/          # policy optimization of verl
 
 ├── data/
 
