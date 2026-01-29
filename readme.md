@@ -17,6 +17,7 @@ This project improves reasoning faithfulness by combining:
 ```bash
 conda create -n causalrl python=3.11
 conda activate causalrl
+```
 2. Dependencies
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 pip install transformers datasets accelerate
