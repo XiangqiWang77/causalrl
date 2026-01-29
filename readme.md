@@ -3,7 +3,7 @@
 
 This repository contains the official implementation of **Causal-Enhanced Policy Optimization (CE-PO)**. 
 
-CE-PO is a model-agnostic reward fusion framework designed to mitigate "shortcut learning" in Large Language Models (LLMs). It augments standard policy optimization (PPO/GRPO) by combining task accuracy rewards with **Jacobian-based causal coherence signals**. [cite_start]This ensures that the model's reasoning pathway ($Z \rightarrow X \rightarrow Y$) is not only accurate but faithful[cite: 45, 46].
+CE-PO is a model-agnostic reward fusion framework designed to mitigate "shortcut learning" in Large Language Models (LLMs). It augments standard policy optimization (PPO/GRPO) by combining task accuracy rewards with **Jacobian-based causal coherence signals**. [cite_start]This ensures that the model's reasoning pathway ($Z \rightarrow X \rightarrow Y$) is not only accurate but faithful
 
 ---
 
