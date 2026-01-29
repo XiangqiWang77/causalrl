@@ -62,13 +62,11 @@ def to_bbeh(ex):
         opt_lines.append(f"{letter}. {opt_text}")
     options_block = "\n".join(opt_lines)
 
-    # final question text（把判题背景+选项合成一题）
     question = (
         f"{ctx}\n\nOptions:\n{options_block}\n\n"
         f"Question: Select the correct holding. Answer with the option text."
     ).strip()
 
-    # answer = 正确选项的 **文本**（不是字母）
     answer = ""
     if isinstance(lbl_idx, int) and 0 <= lbl_idx < len(opts):
         answer = str(opts[lbl_idx]).strip()
@@ -76,13 +74,12 @@ def to_bbeh(ex):
     return {"question": question, "answer": answer}
 
 def main():
-    # 你也可以改成 "train"/"validation"
     ds = load_casehold_split(split="test")
 
-    # 转换
+    
     ds_bbeh = ds.map(to_bbeh, remove_columns=ds.column_names)
 
-    # （可选）随机抽样，比如 400 条
+    
     ds_bbeh = ds_bbeh.shuffle(seed=42).select(range(min(200, len(ds_bbeh))))
 
     out_path = "casehold_bbeh.json"
