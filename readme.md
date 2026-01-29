@@ -7,7 +7,7 @@ CE-PO is a model-agnostic reward fusion framework designed to mitigate "shortcut
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 The project is organized to separate the causal reward calculation from the policy optimization loop.
 
@@ -26,7 +26,7 @@ CausalRL/
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ### Prerequisites
 
