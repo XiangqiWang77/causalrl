@@ -5,10 +5,10 @@ import json, random
 
 random.seed(42)
 
-# 1) 加载 IfQA（全量）
+
 ds = load_dataset("jeggers/ifqa", split="train")
 
-# 2) 转成 BBEH 风格，多个答案用 " or " 连接
+
 def to_bbeh(ex):
     q = (ex.get("question") or "").strip()
     ans_list = ex.get("answers") or ex.get("answer") or []
@@ -20,11 +20,11 @@ def to_bbeh(ex):
 
 ds_bbeh = ds.map(to_bbeh, remove_columns=ds.column_names)
 
-# 3) 随机抽样 200
+
 n = min(200, len(ds_bbeh))
 sampled = ds_bbeh.shuffle(seed=42).select(range(n))
 
-# 4) 保存
+
 out_path = "ifqa_200_bbeh_or_answers.json"
 with open(out_path, "w", encoding="utf-8") as f:
     json.dump(sampled.to_list(), f, ensure_ascii=False, indent=2)
